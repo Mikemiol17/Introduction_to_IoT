@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internet of Things — Complete Visual Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Nunito:wght@300;400;600;700;800;900&family=Inconsolata:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #030d0a;
+  --s1:      #041210;
+  --s2:      #051816;
+  --card:    #061a17;
+  --border:  #0d3d32;
+  --teal:    #00e5b0;
+  --teal2:   #00b888;
+  --teal3:   #006644;
+  --green:   #39ff14;
+  --cyan:    #00fff5;
+  --amber:   #ffbe00;
+  --orange:  #ff7c2a;
+  --pink:    #ff3fa4;
+  --blue:    #2196ff;
+  --violet:  #a855f7;
+  --red:     #ff4545;
+  --white:   #e0fff8;
+  --text:    #7abfb0;
+  --muted:   #0f3d30;
+  --dim:     #081a15;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden;
+}
+
+/* ── PCB grid background ── */
+#pcb-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;}
+
+/* ── HEADER ── */
+.hdr{
+  position:relative;z-index:10;text-align:center;
+  padding:36px 24px 22px;border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,rgba(3,13,10,1) 0%,transparent 100%);
+  overflow:hidden;
+}
+.hdr::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% -20%,rgba(0,229,176,.12) 0%,transparent 65%);
+}
+.hdr .kicker{
+  font-family:'Inconsolata',monospace;font-size:.6rem;
+  letter-spacing:.5em;color:var(--teal3);text-transform:uppercase;margin-bottom:10px;
+}
+.hdr h1{
+  font-family:'Audiowide',cursive;
+  font-size:clamp(1.5rem,5vw,3rem);line-height:1.1;
+  background:linear-gradient(135deg,var(--teal) 0%,var(--cyan) 45%,var(--green) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(0,229,176,.35));letter-spacing:.08em;
+}
+.hdr .sub{font-size:.78rem;color:var(--text);letter-spacing:.2em;margin-top:8px;}
+.hdr-stats{display:flex;justify-content:center;gap:26px;margin-top:14px;flex-wrap:wrap;}
+.hdr-stat{font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;}
+.hdr-stat span{color:var(--teal);font-size:.88rem;font-weight:700;}
+
+/* ── TABS ── */
+.tabs{position:sticky;top:0;z-index:100;background:rgba(3,13,10,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none}
+.tab-row{display:flex;min-width:max-content;}
+.tab{font-family:'Inconsolata',monospace;font-size:.6rem;letter-spacing:.1em;padding:13px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:7px;}
+.tab:hover{color:var(--white);}
+.tab.on{color:var(--teal);border-bottom-color:var(--teal);}
+.tab .tnum{width:18px;height:18px;border-radius:3px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:.55rem;color:var(--muted);}
+.tab.on .tnum{background:var(--teal);color:var(--bg);}
+
+/* ── PANELS ── */
+.panel{display:none;position:relative;z-index:1;}
+.panel.on{display:block;}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1300px;margin:0 auto;padding:26px 20px 52px;}
+.two-col{display:grid;grid-template-columns:1fr 330px;gap:20px;align-items:start;}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.two-even{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media(max-width:960px){.two-col{grid-template-columns:1fr;}.three-col,.four-col{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.three-col,.two-even,.four-col{grid-template-columns:1fr;}}
+
+/* ── SECTION HEAD ── */
+.sec{margin-bottom:20px;}
+.sec .tag{font-family:'Inconsolata',monospace;font-size:.58rem;letter-spacing:.4em;color:var(--teal3);text-transform:uppercase;margin-bottom:6px;}
+.sec h2{font-family:'Audiowide',cursive;font-size:clamp(1rem,2.5vw,1.6rem);color:var(--white);margin-bottom:8px;letter-spacing:.04em;}
+.sec p{font-size:.8rem;color:var(--text);line-height:1.75;max-width:720px;}
+
+/* ── BOX ── */
+.box{background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:0 4px 30px rgba(0,0,0,.5);}
+.box-title{font-family:'Inconsolata',monospace;font-size:.57rem;letter-spacing:.28em;padding:9px 14px;border-bottom:1px solid var(--border);color:var(--teal2);text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.box-title .pip{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);animation:ppb 2s ease infinite;}
+@keyframes ppb{0%,100%{opacity:1;box-shadow:0 0 6px var(--teal)}50%{opacity:.3;box-shadow:none}}
+.box svg{display:block;width:100%;height:auto;}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:5px;padding:13px 15px;border-left:3px solid var(--cl,var(--teal));transition:all .2s;}
+.card:hover{background:var(--s2);transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,0,0,.5);}
+.card h4{font-family:'Inconsolata',monospace;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cl,var(--teal));margin-bottom:6px;}
+.card p{font-size:.76rem;color:var(--text);line-height:1.7;}
+.card code{color:var(--teal);background:rgba(0,229,176,.08);padding:1px 5px;border-radius:3px;font-family:'Inconsolata',monospace;font-size:.82em;}
+.card-stack{display:flex;flex-direction:column;gap:10px;}
+.badge{display:inline-block;margin-top:6px;background:rgba(0,0,0,.4);border:1px solid var(--cl,var(--teal));border-radius:3px;padding:2px 9px;font-family:'Inconsolata',monospace;font-size:.57rem;color:var(--cl,var(--teal));letter-spacing:.08em;}
+
+/* ── CODE BLOCKS ── */
+.codeblock{background:#020a07;border:1px solid var(--border);border-radius:4px;padding:14px 16px;font-family:'Inconsolata',monospace;font-size:.76rem;line-height:1.9;overflow-x:auto;position:relative;}
+.codeblock::before{content:'CODE';position:absolute;top:8px;right:12px;font-size:.52rem;color:var(--muted);letter-spacing:.15em;}
+.ln{color:var(--muted);user-select:none;margin-right:14px;font-size:.68rem;}
+.kw{color:#ff7c2a;} .tp{color:#ffbe00;} .cl2{color:#00e5b0;} .st{color:#a3e635;} .cm{color:#2d6b50;font-style:italic;} .nm{color:#ff9d5c;} .fn{color:#00fff5;} .hl{background:rgba(0,229,176,.06);display:inline-block;width:100%;border-left:2px solid var(--teal);padding-left:4px;}
+
+/* ── DEVICE CARD ── */
+.device-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;transition:all .2s;cursor:default;position:relative;overflow:hidden;}
+.device-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cl,var(--teal)),transparent);}
+.device-card:hover{background:var(--s2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.5),0 0 20px rgba(0,229,176,.06);}
+.device-icon{font-size:1.8rem;margin-bottom:8px;display:block;}
+.device-name{font-weight:800;color:var(--white);font-size:.9rem;margin-bottom:3px;}
+.device-cat{font-family:'Inconsolata',monospace;font-size:.55rem;letter-spacing:.18em;color:var(--cl,var(--teal));text-transform:uppercase;margin-bottom:8px;}
+.device-desc{font-size:.72rem;color:var(--text);line-height:1.6;}
+.device-spec{background:rgba(0,0,0,.35);border-radius:3px;padding:5px 9px;font-size:.65rem;color:var(--amber);margin-top:8px;line-height:1.5;font-family:'Inconsolata',monospace;}
+
+/* ── PROTOCOL TABLE ── */
+.proto-table{width:100%;border-collapse:collapse;font-size:.73rem;}
+.proto-table th{background:var(--dim);color:var(--teal2);padding:9px 12px;text-align:left;font-family:'Inconsolata',monospace;font-size:.58rem;letter-spacing:.15em;border-bottom:1px solid var(--border);}
+.proto-table td{padding:9px 12px;border-bottom:1px solid rgba(13,61,50,.5);vertical-align:top;}
+.proto-table tr:hover td{background:rgba(0,229,176,.03);}
+.proto-table .pname{color:var(--teal);font-weight:700;font-family:'Inconsolata',monospace;}
+.proto-table .pval{color:var(--amber);}
+.proto-table .pgood{color:var(--green);}
+.proto-table .pbad{color:var(--red);}
+
+/* ── LAYER STACK ── */
+.layer-stack{display:flex;flex-direction:column;gap:4px;padding:14px;}
+.layer-item{border:1px solid var(--border);border-radius:4px;padding:12px 16px;display:flex;align-items:center;gap:14px;transition:all .2s;cursor:pointer;}
+.layer-item:hover{border-color:var(--teal);background:rgba(0,229,176,.04);}
+.layer-item .li-num{width:28px;height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Audiowide',cursive;font-size:.72rem;font-weight:700;flex-shrink:0;}
+.layer-item .li-name{font-weight:700;color:var(--white);font-size:.85rem;margin-bottom:2px;}
+.layer-item .li-desc{font-size:.68rem;color:var(--text);}
+.layer-item .li-ex{font-family:'Inconsolata',monospace;font-size:.65rem;color:var(--muted);margin-left:auto;text-align:right;}
+
+/* ── TOPOLOGY ── */
+.topo-card{background:var(--card);border:1px solid var(--border);border-radius:5px;padding:12px;text-align:center;transition:all .2s;}
+.topo-card:hover{border-color:var(--teal);background:var(--s2);}
+.topo-card svg{display:block;width:100%;margin-bottom:8px;}
+.topo-name{font-weight:700;color:var(--white);font-size:.82rem;margin-bottom:4px;}
+.topo-desc{font-size:.68rem;color:var(--text);line-height:1.5;}
+
+/* ── SIGNAL BARS ── */
+.signal-bar{display:flex;align-items:flex-end;gap:2px;height:20px;}
+.sb{width:5px;border-radius:1px;background:var(--cl,var(--teal));opacity:.3;}
+.sb.on{opacity:1;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.5);opacity:0}}
+@keyframes data-flow{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-500}}
+@keyframes node-blink{0%,100%{opacity:.5;r:5}50%{opacity:1;r:7}}
+@keyframes rotate-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes signal-wave{0%{r:8;opacity:.9}100%{r:50;opacity:0}}
+@keyframes voltage{0%,100%{stroke-dashoffset:0}50%{stroke-dashoffset:-30}}
+@keyframes scan-line{0%{transform:translateY(0)}100%{transform:translateY(300px)}}
+@keyframes float-up{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-40px);opacity:0}}
+@keyframes conn-flow{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
+@keyframes circuit-glow{0%,100%{filter:drop-shadow(0 0 2px var(--teal))}50%{filter:drop-shadow(0 0 8px var(--teal))}}
+
+.panel.on .box{animation:fadeup .32s ease both;}
+.panel.on .card{animation:fadeup .32s ease both;}
+.panel.on .device-card{animation:fadeup .35s ease both;}
+</style>
+</head>
+<body>
+
+<canvas id="pcb-canvas"></canvas>
+
+<header class="hdr">
+  <div class="kicker">Complete Animated Visual Reference</div>
+  <h1>Internet of Things</h1>
+  <p class="sub">Connecting the Physical World to the Digital — Sensors to Cloud</p>
+  <div class="hdr-stats">
+    <div class="hdr-stat"><span>15B+</span>Connected Devices (2025)</div>
+    <div class="hdr-stat"><span>75B+</span>Expected by 2030</div>
+    <div class="hdr-stat"><span>$1.1T</span>Market Size 2026</div>
+    <div class="hdr-stat"><span>5</span>Architecture Layers</div>
+    <div class="hdr-stat"><span>MQTT</span>Core Protocol</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tab-row">
+    <button class="tab on"  onclick="go('intro',this)"><span class="tnum">1</span>Introduction</button>
+    <button class="tab"     onclick="go('arch',this)"><span class="tnum">2</span>Architecture</button>
+    <button class="tab"     onclick="go('sensors',this)"><span class="tnum">3</span>Sensors & Actuators</button>
+    <button class="tab"     onclick="go('hardware',this)"><span class="tnum">4</span>Hardware Platforms</button>
+    <button class="tab"     onclick="go('protocols',this)"><span class="tnum">5</span>Protocols</button>
+    <button class="tab"     onclick="go('networks',this)"><span class="tnum">6</span>Networks & Connectivity</button>
+    <button class="tab"     onclick="go('cloud',this)"><span class="tnum">7</span>Cloud & Data</button>
+    <button class="tab"     onclick="go('security',this)"><span class="tnum">8</span>Security</button>
+    <button class="tab"     onclick="go('apps',this)"><span class="tnum">9</span>Applications</button>
+    <button class="tab"     onclick="go('code',this)"><span class="tnum">10</span>IoT Programming</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════
+  1 — INTRODUCTION
+═══════════════════════════ -->
+<div id="p-intro" class="panel on">
+<div class="wrap">
+  <div class="sec">
+    <div class="tag">Chapter 1 — Foundation</div>
+    <h2>What is the Internet of Things?</h2>
+    <p>The Internet of Things (IoT) is the network of physical objects — devices, vehicles, appliances, and environments — embedded with <strong style="color:var(--teal)">sensors, software, and connectivity</strong> that allows them to collect and exchange data over the internet. It bridges the gap between the physical world and digital systems, enabling unprecedented automation and intelligence.</p>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>THE IoT ECOSYSTEM — HOW IT ALL CONNECTS</div>
+    <svg viewBox="0 0 860 380" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="gg"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="gg2"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10z" fill="#00e5b0" opacity=".8"/>
+        </marker>
+        <radialGradient id="cloudGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#00e5b0" stop-opacity=".15"/>
+          <stop offset="100%" stop-color="#030d0a" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="860" height="380" fill="#020a07"/>
+
+      <!-- PHYSICAL WORLD (bottom) -->
+      <!-- Smart home devices -->
+      <g transform="translate(60,290)">
+        <rect x="-38" y="-28" width="76" height="56" rx="4" fill="rgba(0,229,176,.07)" stroke="#00e5b0" stroke-width="1.5" filter="url(#gg)"/>
+        <text x="0" y="-6" text-anchor="middle" font-size="18">🏠</text>
+        <text x="0" y="14" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#00e5b0">Smart Home</text>
+        <text x="0" y="24" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">thermostat, lights</text>
+        <!-- Pulse rings -->
+        <circle cx="0" cy="-6" r="8" fill="none" stroke="#00e5b0" stroke-width="1" opacity="0">
+          <animate attributeName="r" values="8;40" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".7;0" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+      <!-- Industrial -->
+      <g transform="translate(195,300)">
+        <rect x="-38" y="-28" width="76" height="56" rx="4" fill="rgba(255,190,0,.07)" stroke="#ffbe00" stroke-width="1.5"/>
+        <text x="0" y="-6" text-anchor="middle" font-size="18">🏭</text>
+        <text x="0" y="14" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#ffbe00">Industrial</text>
+        <text x="0" y="24" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#4d3800">machines, robots</text>
+        <circle cx="0" cy="-6" r="8" fill="none" stroke="#ffbe00" stroke-width="1" opacity="0">
+          <animate attributeName="r" values="8;40" dur="2.5s" begin="-0.8s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".7;0" dur="2.5s" begin="-0.8s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+      <!-- Wearables -->
+      <g transform="translate(330,295)">
+        <rect x="-38" y="-28" width="76" height="56" rx="4" fill="rgba(255,63,164,.07)" stroke="#ff3fa4" stroke-width="1.5"/>
+        <text x="0" y="-6" text-anchor="middle" font-size="18">⌚</text>
+        <text x="0" y="14" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#ff3fa4">Wearables</text>
+        <text x="0" y="24" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#4d0030">fitness, health</text>
+        <circle cx="0" cy="-6" r="8" fill="none" stroke="#ff3fa4" stroke-width="1" opacity="0">
+          <animate attributeName="r" values="8;40" dur="2.5s" begin="-1.6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".7;0" dur="2.5s" begin="-1.6s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+      <!-- Transport -->
+      <g transform="translate(470,300)">
+        <rect x="-38" y="-28" width="76" height="56" rx="4" fill="rgba(33,150,255,.07)" stroke="#2196ff" stroke-width="1.5"/>
+        <text x="0" y="-6" text-anchor="middle" font-size="18">🚗</text>
+        <text x="0" y="14" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#2196ff">Transport</text>
+        <text x="0" y="24" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#002966">connected cars</text>
+        <circle cx="0" cy="-6" r="8" fill="none" stroke="#2196ff" stroke-width="1" opacity="0">
+          <animate attributeName="r" values="8;40" dur="2.5s" begin="-0.4s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".7;0" dur="2.5s" begin="-0.4s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+      <!-- Agriculture -->
+      <g transform="translate(605,295)">
+        <rect x="-38" y="-28" width="76" height="56" rx="4" fill="rgba(57,255,20,.07)" stroke="#39ff14" stroke-width="1.5"/>
+        <text x="0" y="-6" text-anchor="middle" font-size="18">🌾</text>
+        <text x="0" y="14" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#39ff14">Agriculture</text>
+        <text x="0" y="24" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0d4000">soil sensors, drones</text>
+        <circle cx="0" cy="-6" r="8" fill="none" stroke="#39ff14" stroke-width="1" opacity="0">
+          <animate attributeName="r" values="8;40" dur="2.5s" begin="-1.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".7;0" dur="2.5s" begin="-1.2s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+      <!-- Medical -->
+      <g transform="translate(740,300)">
+        <rect x="-38" y="-28" width="76" height="56" rx="4" fill="rgba(255,69,69,.07)" stroke="#ff4545" stroke-width="1.5"/>
+        <text x="0" y="-6" text-anchor="middle" font-size="18">🏥</text>
+        <text x="0" y="14" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#ff4545">Healthcare</text>
+        <text x="0" y="24" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#4d0000">monitors, implants</text>
+        <circle cx="0" cy="-6" r="8" fill="none" stroke="#ff4545" stroke-width="1" opacity="0">
+          <animate attributeName="r" values="8;40" dur="2.5s" begin="-2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".7;0" dur="2.5s" begin="-2s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+
+      <!-- Gateway layer -->
+      <rect x="40" y="200" width="780" height="60" rx="5" fill="rgba(255,190,0,.04)" stroke="rgba(255,190,0,.25)" stroke-width="1.2"/>
+      <text x="430" y="222" text-anchor="middle" font-family="Audiowide" font-size="10" fill="#ffbe00" letter-spacing="2">GATEWAY / EDGE LAYER</text>
+      <text x="430" y="240" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#4d3800">WiFi Router · 5G Base Station · LoRa Gateway · Zigbee Hub · Edge Server</text>
+      <text x="430" y="253" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#4d3800">Aggregates device data · Protocol translation · Local processing · Filtering</text>
+
+      <!-- Animated data flow lines from devices to gateway -->
+      <line x1="60" y1="262" x2="60" y2="200" stroke="#00e5b0" stroke-width="1.2" stroke-dasharray="4 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="1s" repeatCount="indefinite"/></line>
+      <line x1="195" y1="272" x2="195" y2="200" stroke="#ffbe00" stroke-width="1.2" stroke-dasharray="4 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="1.1s" repeatCount="indefinite"/></line>
+      <line x1="330" y1="267" x2="330" y2="200" stroke="#ff3fa4" stroke-width="1.2" stroke-dasharray="4 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="0.9s" repeatCount="indefinite"/></line>
+      <line x1="470" y1="272" x2="470" y2="200" stroke="#2196ff" stroke-width="1.2" stroke-dasharray="4 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="1.2s" repeatCount="indefinite"/></line>
+      <line x1="605" y1="267" x2="605" y2="200" stroke="#39ff14" stroke-width="1.2" stroke-dasharray="4 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="0.8s" repeatCount="indefinite"/></line>
+      <line x1="740" y1="272" x2="740" y2="200" stroke="#ff4545" stroke-width="1.2" stroke-dasharray="4 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="1.3s" repeatCount="indefinite"/></line>
+
+      <!-- Internet Cloud -->
+      <ellipse cx="430" cy="120" rx="340" ry="60" fill="url(#cloudGrad)" stroke="rgba(0,229,176,.2)" stroke-width="1.5" filter="url(#gg2)">
+        <animate attributeName="rx" values="340;350;340" dur="4s" repeatCount="indefinite"/>
+      </ellipse>
+      <text x="430" y="108" text-anchor="middle" font-family="Audiowide" font-size="12" fill="#00e5b0" filter="url(#gg)">☁ INTERNET / CLOUD</text>
+      <text x="430" y="126" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#006644">AWS IoT · Azure IoT Hub · Google Cloud IoT · MQTT Broker · REST APIs</text>
+      <text x="430" y="142" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#006644">Storage · Analytics · Machine Learning · Dashboards · Alerts</text>
+
+      <!-- Gateway to Cloud -->
+      <line x1="430" y1="200" x2="430" y2="165" stroke="#00e5b0" stroke-width="2" stroke-dasharray="6 3" marker-end="url(#fa)">
+        <animate attributeName="stroke-dashoffset" values="0;-36" dur="1s" repeatCount="indefinite"/>
+      </line>
+      <text x="450" y="188" font-family="Inconsolata" font-size="8" fill="#006644">MQTT/HTTPS</text>
+
+      <!-- Application layer top -->
+      <rect x="40" y="15" width="780" height="45" rx="4" fill="rgba(0,229,176,.04)" stroke="rgba(0,229,176,.2)" stroke-width="1"/>
+      <text x="430" y="33" text-anchor="middle" font-family="Audiowide" font-size="9" fill="#00b888" letter-spacing="2">APPLICATION LAYER</text>
+      <text x="430" y="48" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#0f3d30">📱 Mobile Apps · 🖥️ Web Dashboards · 🤖 Automation Rules · 📊 Analytics · 🔔 Notifications</text>
+    </svg>
+  </div>
+
+  <div class="three-col">
+    <div class="card" style="--cl:var(--teal)">
+      <h4>What Makes IoT Unique?</h4>
+      <p>IoT differs from regular internet by connecting <code>things</code> — physical objects with sensors — not just computers. Devices often have limited power (batteries), limited processing, intermittent connectivity, and must operate autonomously for months or years with no human interaction.</p>
+    </div>
+    <div class="card" style="--cl:var(--amber)">
+      <h4>M2M vs IoT</h4>
+      <p><code>M2M</code> (Machine-to-Machine): older term, direct device-to-device communication, often closed networks (telecom-centric). <code>IoT</code>: broader ecosystem, IP-based, includes cloud platforms, analytics, AI, and open standards. IoT evolved from M2M by adding the internet backbone and application layer.</p>
+    </div>
+    <div class="card" style="--cl:var(--green)">
+      <h4>IoT vs IIoT vs AIoT</h4>
+      <p><code>IoT</code>: consumer + industrial devices connected to internet.<br><code>IIoT</code>: Industrial IoT — factories, oil rigs, power grids.<br><code>AIoT</code>: AI + IoT — intelligent edge inference (TinyML), predictive maintenance.<br><code>CIoT</code>: Consumer IoT — smart home, wearables.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════
+  2 — ARCHITECTURE
+═══════════════════════════ -->
+<div id="p-arch" class="panel">
+<div class="wrap">
+  <div class="sec">
+    <div class="tag">Chapter 2 — Architecture</div>
+    <h2>IoT Architecture — The 5-Layer Model</h2>
+    <p>IoT systems are structured in layers, each responsible for a distinct function. Understanding this stack is essential for designing reliable, scalable, and secure IoT solutions. Data flows from physical sensors all the way up to business intelligence dashboards.</p>
+  </div>
+
+  <div class="two-col">
+  <div>
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>5-LAYER IoT ARCHITECTURE — ANIMATED DATA FLOW</div>
+    <div class="layer-stack">
+      <div class="layer-item" style="background:rgba(0,229,176,.06);border-color:rgba(0,229,176,.4)">
+        <div class="li-num" style="background:rgba(0,229,176,.2);color:var(--teal)">05</div>
+        <div>
+          <div class="li-name" style="color:var(--teal)">Business Layer</div>
+          <div class="li-desc">Manages overall IoT system — dashboards, analytics, business decisions, SLA monitoring, ROI tracking</div>
+        </div>
+        <div class="li-ex">📊 Grafana<br>📈 PowerBI<br>🤖 AI/ML</div>
+      </div>
+      <div style="text-align:center;font-size:.9rem;color:var(--border);padding:2px">↕ commands / insights</div>
+      <div class="layer-item" style="background:rgba(255,190,0,.05);border-color:rgba(255,190,0,.35)">
+        <div class="li-num" style="background:rgba(255,190,0,.2);color:var(--amber)">04</div>
+        <div>
+          <div class="li-name" style="color:var(--amber)">Application Layer</div>
+          <div class="li-desc">Smart home, healthcare, industrial automation — domain-specific apps consuming processed data</div>
+        </div>
+        <div class="li-ex">🏠 Smart Home<br>🏥 eHealth<br>🏭 Industry 4.0</div>
+      </div>
+      <div style="text-align:center;font-size:.9rem;color:var(--border);padding:2px">↕ processed data / API</div>
+      <div class="layer-item" style="background:rgba(168,85,247,.05);border-color:rgba(168,85,247,.35)">
+        <div class="li-num" style="background:rgba(168,85,247,.2);color:var(--violet)">03</div>
+        <div>
+          <div class="li-name" style="color:var(--violet)">Middleware / Processing Layer</div>
+          <div class="li-desc">Cloud services, data storage, computation, ML inference, protocol mediation, device management</div>
+        </div>
+        <div class="li-ex">☁️ AWS IoT<br>🔧 Node-RED<br>🗄️ InfluxDB</div>
+      </div>
+      <div style="text-align:center;font-size:.9rem;color:var(--border);padding:2px">↕ filtered data / MQTT / HTTPS</div>
+      <div class="layer-item" style="background:rgba(255,124,42,.05);border-color:rgba(255,124,42,.35)">
+        <div class="li-num" style="background:rgba(255,124,42,.2);color:var(--orange)">02</div>
+        <div>
+          <div class="li-name" style="color:var(--orange)">Network / Gateway Layer</div>
+          <div class="li-desc">Connectivity, protocol conversion, data compression, local processing at edge, security enforcement</div>
+        </div>
+        <div class="li-ex">📡 5G/WiFi<br>🔀 Gateway<br>⚡ Edge Comp.</div>
+      </div>
+      <div style="text-align:center;font-size:.9rem;color:var(--border);padding:2px">↕ raw sensor data / BLE / Zigbee</div>
+      <div class="layer-item" style="background:rgba(0,255,245,.05);border-color:rgba(0,255,245,.35)">
+        <div class="li-num" style="background:rgba(0,255,245,.2);color:var(--cyan)">01</div>
+        <div>
+          <div class="li-name" style="color:var(--cyan)">Perception / Device Layer</div>
+          <div class="li-desc">Physical sensors (temperature, motion, light), actuators (motors, valves), embedded microcontrollers</div>
+        </div>
+        <div class="li-ex">🌡️ Sensors<br>⚙️ Actuators<br>💻 MCU/SBC</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>EDGE vs FOG vs CLOUD COMPUTING IN IoT</div>
+    <svg viewBox="0 0 620 230" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="efg"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="620" height="230" fill="#020a07"/>
+
+      <!-- Device Layer -->
+      <g transform="translate(60,180)">
+        <rect x="-45" y="-30" width="90" height="60" rx="4" fill="rgba(0,255,245,.07)" stroke="#00fff5" stroke-width="1.5" filter="url(#efg)"/>
+        <text x="0" y="-8" text-anchor="middle" font-size="16">📟</text>
+        <text x="0" y="10" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#00fff5">DEVICE</text>
+        <text x="0" y="22" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#006666">sensor + MCU</text>
+      </g>
+
+      <!-- Edge (on-device or nearby) -->
+      <g transform="translate(190,155)">
+        <rect x="-55" y="-38" width="110" height="76" rx="4" fill="rgba(0,229,176,.07)" stroke="#00e5b0" stroke-width="1.8" filter="url(#efg)"/>
+        <text x="0" y="-14" text-anchor="middle" font-family="Audiowide" font-size="9" fill="#00e5b0">EDGE</text>
+        <text x="0" y="2" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006644">On-device inference</text>
+        <text x="0" y="14" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006644">Real-time response</text>
+        <text x="0" y="26" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006644">&lt;1ms latency</text>
+        <text x="0" y="38" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#00e5b0">Raspberry Pi, ESP32</text>
+      </g>
+
+      <!-- Fog -->
+      <g transform="translate(360,135)">
+        <rect x="-60" y="-45" width="120" height="90" rx="4" fill="rgba(255,190,0,.05)" stroke="#ffbe00" stroke-width="1.5" filter="url(#efg)"/>
+        <text x="0" y="-20" text-anchor="middle" font-family="Audiowide" font-size="9" fill="#ffbe00">FOG</text>
+        <text x="0" y="-4" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">Local server / hub</text>
+        <text x="0" y="10" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">Aggregate + filter</text>
+        <text x="0" y="24" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">5–50ms latency</text>
+        <text x="0" y="38" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#ffbe00">Factory server, gateway</text>
+      </g>
+
+      <!-- Cloud -->
+      <g transform="translate(545,110)">
+        <rect x="-60" y="-55" width="120" height="110" rx="4" fill="rgba(168,85,247,.06)" stroke="#a855f7" stroke-width="1.5" filter="url(#efg)"/>
+        <text x="0" y="-28" text-anchor="middle" font-family="Audiowide" font-size="9" fill="#a855f7">CLOUD</text>
+        <text x="0" y="-10" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4a1080">Long-term storage</text>
+        <text x="0" y="4" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4a1080">ML training</text>
+        <text x="0" y="18" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4a1080">Global access</text>
+        <text x="0" y="32" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4a1080">100–500ms latency</text>
+        <text x="0" y="46" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#a855f7">AWS, Azure, GCP</text>
+      </g>
+
+      <!-- Connecting lines -->
+      <path d="M107,180 L132,167" fill="none" stroke="#00fff5" stroke-width="1.5" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-30" dur="1s" repeatCount="indefinite"/></path>
+      <path d="M248,155 L297,148" fill="none" stroke="#00e5b0" stroke-width="1.5" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-30" dur="1.2s" repeatCount="indefinite"/></path>
+      <path d="M422,135 L482,128" fill="none" stroke="#ffbe00" stroke-width="1.5" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-30" dur="1.4s" repeatCount="indefinite"/></path>
+
+      <!-- Latency bar at bottom -->
+      <text x="310" y="218" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#0f3d30">← LOWER LATENCY · MORE COST-EFFECTIVE · PRIVACY PRESERVED</text>
+      <text x="310" y="230" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#0f3d30">HIGHER STORAGE · MORE COMPUTE · GLOBAL SCALE →</text>
+    </svg>
+  </div>
+  </div>
+
+  <div class="card-stack">
+    <div class="card" style="--cl:var(--teal)"><h4>Why Layered Architecture?</h4><p>Separation of concerns allows each layer to evolve independently. A new sensor type doesn't require changes to the cloud platform. A new analytics tool doesn't require touching the device firmware. This modularity enables the massive scale of IoT ecosystems.</p></div>
+    <div class="card" style="--cl:var(--amber)"><h4>Edge Computing in IoT</h4><p>Processing data at the edge (on or near the device) reduces latency, saves bandwidth, improves privacy, and works offline. A factory robot can't wait 500ms for a cloud response — it needs <code>&lt;1ms</code> local decisions. TinyML (TensorFlow Lite) enables ML at the edge.</p></div>
+    <div class="card" style="--cl:var(--orange)"><h4>Digital Twin</h4><p>A <strong style="color:var(--orange)">digital twin</strong> is a virtual replica of a physical IoT device or system, updated in real-time via sensor data. Used for simulation, predictive maintenance, remote monitoring, and "what-if" analysis. Key concept in Industry 4.0 and smart cities.</p></div>
+    <div class="card" style="--cl:var(--violet)"><h4>Microservices + IoT</h4><p>Modern IoT platforms use microservices architecture: device registry, message broker, data ingestion, stream processing, storage, and notification are separate services. This enables independent scaling — the message broker might handle 1M messages/second while analytics runs on demand.</p></div>
+  </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════
+  3 — SENSORS & ACTUATORS
+═══════════════════════════ -->
+<div id="p-sensors" class="panel">
+<div class="wrap">
+  <div class="sec">
+    <div class="tag">Chapter 3 — Perception Layer</div>
+    <h2>Sensors &amp; Actuators — The Eyes, Ears &amp; Hands of IoT</h2>
+    <p>Sensors convert physical phenomena into electrical signals (input). Actuators convert electrical signals into physical action (output). Together they form the perception layer — the interface between the digital world and physical reality.</p>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>SENSOR SIGNAL CHAIN — FROM PHYSICAL TO DIGITAL</div>
+    <svg viewBox="0 0 860 160" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="sca" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#00e5b0"/></marker>
+        <filter id="scg"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="860" height="160" fill="#020a07"/>
+
+      <!-- Physical world -->
+      <rect x="12" y="30" width="110" height="100" rx="4" fill="rgba(0,255,245,.05)" stroke="rgba(0,255,245,.3)" stroke-width="1.3"/>
+      <text x="67" y="53" text-anchor="middle" font-size="18">🌡️</text>
+      <text x="67" y="73" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#00fff5">PHYSICAL</text>
+      <text x="67" y="86" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#00fff5">PHENOMENON</text>
+      <text x="67" y="104" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006666">heat, light, motion</text>
+      <text x="67" y="116" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006666">pressure, humidity</text>
+
+      <path d="M124,80 L158,80" fill="none" stroke="#00e5b0" stroke-width="1.5" marker-end="url(#sca)" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-30" dur="1s" repeatCount="indefinite"/></path>
+      <text x="141" y="73" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#006644">transducer</text>
+
+      <!-- Sensor -->
+      <rect x="160" y="30" width="110" height="100" rx="4" fill="rgba(0,229,176,.07)" stroke="#00e5b0" stroke-width="1.8" filter="url(#scg)"/>
+      <text x="215" y="53" text-anchor="middle" font-size="18">📡</text>
+      <text x="215" y="73" text-anchor="middle" font-family="Audiowide" font-size="8" fill="#00e5b0">SENSOR</text>
+      <text x="215" y="90" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#006644">DHT22, LM35</text>
+      <text x="215" y="104" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#006644">MPU6050, PIR</text>
+      <text x="215" y="118" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#00e5b0">Analog output (mV)</text>
+
+      <path d="M272,80 L306,80" fill="none" stroke="#00e5b0" stroke-width="1.5" marker-end="url(#sca)" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-30" dur="1s" repeatCount="indefinite" begin="-0.3s"/></path>
+      <text x="289" y="73" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#006644">analog signal</text>
+
+      <!-- Signal Conditioning -->
+      <rect x="308" y="30" width="120" height="100" rx="4" fill="rgba(255,190,0,.06)" stroke="#ffbe00" stroke-width="1.5"/>
+      <text x="368" y="53" text-anchor="middle" font-size="16">🔧</text>
+      <text x="368" y="70" text-anchor="middle" font-family="Audiowide" font-size="8" fill="#ffbe00">CONDITIONING</text>
+      <text x="368" y="86" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">Amplification</text>
+      <text x="368" y="99" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">Noise filtering</text>
+      <text x="368" y="112" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">Impedance match</text>
+      <text x="368" y="124" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#ffbe00">Op-Amps, RC filters</text>
+
+      <path d="M430,80 L464,80" fill="none" stroke="#ffbe00" stroke-width="1.5" marker-end="url(#sca)" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-30" dur="1s" repeatCount="indefinite" begin="-0.6s"/></path>
+      <text x="447" y="73" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#4d3800">conditioned V</text>
+
+      <!-- ADC -->
+      <rect x="466" y="30" width="110" height="100" rx="4" fill="rgba(255,124,42,.06)" stroke="#ff7c2a" stroke-width="1.5"/>
+      <text x="521" y="53" text-anchor="middle" font-size="16">⚡</text>
+      <text x="521" y="70" text-anchor="middle" font-family="Audiowide" font-size="8" fill="#ff7c2a">ADC</text>
+      <text x="521" y="86" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d1a00">Analog-to-Digital</text>
+      <text x="521" y="99" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d1a00">Converter</text>
+      <text x="521" y="112" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d1a00">8–24 bit resolution</text>
+      <text x="521" y="124" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#ff7c2a">Built-in to MCU</text>
+
+      <path d="M578,80 L612,80" fill="none" stroke="#ff7c2a" stroke-width="1.5" marker-end="url(#sca)" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-30" dur="1s" repeatCount="indefinite" begin="-0.9s"/></path>
+      <text x="595" y="73" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#4d1a00">digital bits</text>
+
+      <!-- MCU -->
+      <rect x="614" y="30" width="110" height="100" rx="4" fill="rgba(57,255,20,.06)" stroke="#39ff14" stroke-width="1.5" filter="url(#scg)"/>
+      <text x="669" y="53" text-anchor="middle" font-size="16">💾</text>
+      <text x="669" y="70" text-anchor="middle" font-family="Audiowide" font-size="8" fill="#39ff14">MCU</text>
+      <text x="669" y="86" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0d4000">Process + Store</text>
+      <text x="669" y="99" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0d4000">Apply algorithm</text>
+      <text x="669" y="112" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0d4000">Decision logic</text>
+      <text x="669" y="124" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#39ff14">Arduino, ESP32</text>
+
+      <path d="M726,80 L760,80" fill="none" stroke="#39ff14" stroke-width="1.5" marker-end="url(#sca)" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-30" dur="1s" repeatCount="indefinite" begin="-1.2s"/></path>
+      <text x="743" y="73" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0d4000">transmit</text>
+
+      <!-- Output -->
+      <rect x="762" y="30" width="86" height="100" rx="4" fill="rgba(168,85,247,.06)" stroke="#a855f7" stroke-width="1.5"/>
+      <text x="805" y="53" text-anchor="middle" font-size="16">☁️</text>
+      <text x="805" y="70" text-anchor="middle" font-family="Audiowide" font-size="8" fill="#a855f7">CLOUD</text>
+      <text x="805" y="86" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4a1080">JSON payload</text>
+      <text x="805" y="99" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4a1080">MQTT publish</text>
+      <text x="805" y="112" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#a855f7">{"temp":23.5}</text>
+    </svg>
+  </div>
+
+  <!-- Sensor types grid -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:16px;">
+    <div class="device-card" style="--cl:var(--teal)">
+      <span class="device-icon">🌡️</span>
+      <div class="device-name">Temperature & Humidity</div>
+      <div class="device-cat">Environmental</div>
+      <p class="device-desc">Measure ambient conditions. Thermistors change resistance with temperature. Capacitive humidity sensors measure water vapour.</p>
+      <div class="device-spec">DHT22: ±0.5°C, ±2–5% RH · I2C/One-wire · LM35: 10mV/°C</div>
+    </div>
+    <div class="device-card" style="--cl:var(--amber)">
+      <span class="device-icon">📏</span>
+      <div class="device-name">Distance & Proximity</div>
+      <div class="device-cat">Motion / Ranging</div>
+      <p class="device-desc">Ultrasonic (sound echo), infrared (IR reflection), LIDAR (laser time-of-flight). Used in robotics, parking sensors, presence detection.</p>
+      <div class="device-spec">HC-SR04: 2cm–4m ultrasonic · VL53L0X: ToF LIDAR 2m · PIR: 7m passive IR</div>
+    </div>
+    <div class="device-card" style="--cl:var(--blue)">
+      <span class="device-icon">⚡</span>
+      <div class="device-name">Accelerometer & Gyroscope</div>
+      <div class="device-cat">Motion / IMU</div>
+      <p class="device-desc">MEMS sensors detect acceleration (g-force) and angular velocity (°/s). IMU (Inertial Measurement Unit) combines both plus magnetometer for full 9-DOF orientation.</p>
+      <div class="device-spec">MPU6050: 6-DOF IMU, I2C · ±2g to ±16g · ±250–2000°/s gyro</div>
+    </div>
+    <div class="device-card" style="--cl:var(--green)">
+      <span class="device-icon">💡</span>
+      <div class="device-name">Light & Colour</div>
+      <div class="device-cat">Optical</div>
+      <p class="device-desc">Photodiodes, phototransistors, LDRs (Light Dependent Resistors) measure luminosity. Colour sensors (TCS34725) detect RGB values. Used in displays, agriculture, and security.</p>
+      <div class="device-spec">BH1750: 0–65535 lux, I2C · LDR: 1–100kΩ voltage divider</div>
+    </div>
+    <div class="device-card" style="--cl:var(--pink)">
+      <span class="device-icon">💓</span>
+      <div class="device-name">Biometric Sensors</div>
+      <div class="device-cat">Health / Medical</div>
+      <p class="device-desc">Heart rate (PPG — photoplethysmography), SpO2 (blood oxygen), ECG, skin temperature, glucose. Foundation of wearables and remote patient monitoring.</p>
+      <div class="device-spec">MAX30102: HR + SpO2 · AD8232: ECG single-lead · MLX90614: IR temp</div>
+    </div>
+    <div class="device-card" style="--cl:var(--orange)">
+      <span class="device-icon">🌫️</span>
+      <div class="device-name">Gas & Air Quality</div>
+      <div class="device-cat">Chemical</div>
+      <p class="device-desc">Electrochemical cells detect CO, CO2, NOx, VOCs. Metal oxide sensors (MQ series) change resistance with gas concentration. Critical for smart HVAC and safety systems.</p>
+      <div class="device-spec">MQ-2: LPG/smoke · MH-Z19: NDIR CO2 0–5000ppm · CCS811: TVOC+eCO2</div>
+    </div>
+    <div class="device-card" style="--cl:var(--violet)">
+      <span class="device-icon">💧</span>
+      <div class="device-name">Flow & Pressure</div>
+      <div class="device-cat">Fluid/Industrial</div>
+      <p class="device-desc">Hall-effect flow meters count pulses per litre. Piezoresistive pressure sensors use Wheatstone bridge. Used in water management, pneumatics, and medical devices.</p>
+      <div class="device-spec">YF-S201: 1–30 L/min · BMP280: 300–1100 hPa barometric pressure</div>
+    </div>
+    <div class="device-card" style="--cl:var(--red)">
+      <span class="device-icon">⚙️</span>
+      <div class="device-name">Actuators</div>
+      <div class="device-cat">Output / Control</div>
+      <p class="device-desc">Convert electrical signals to physical action: servo motors (angle), stepper motors (precise steps), DC motors (continuous spin), solenoid valves (fluid control), relays (switching), LEDs, buzzers, LCD displays.</p>
+      <div class="device-spec">SG90 Servo: 0–180° · 28BYJ-48 Stepper · 5V Relay module · L298N motor driver</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════
+  4 — HARDWARE PLATFORMS
+═══════════════════════════ -->
+<div id="p-hardware" class="panel">
+<div class="wrap">
+  <div class="sec">
+    <div class="tag">Chapter 4 — Hardware</div>
+    <h2>IoT Hardware Platforms — MCUs, SBCs &amp; SoCs</h2>
+    <p>The hardware platform is the brain of any IoT device. From ultra-low-power microcontrollers to full Linux-capable single-board computers, choosing the right platform involves tradeoffs between power consumption, processing power, connectivity, and cost.</p>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>HARDWARE COMPARISON — POWER vs CAPABILITY SPECTRUM</div>
+    <svg viewBox="0 0 860 120" xmlns="http://www.w3.org/2000/svg">
+      <rect width="860" height="120" fill="#020a07"/>
+      <defs>
+        <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#00e5b0" stop-opacity=".4"/>
+          <stop offset="100%" stop-color="#a855f7" stop-opacity=".4"/>
+        </linearGradient>
+      </defs>
+      <rect x="20" y="50" width="820" height="12" rx="6" fill="url(#specGrad)" opacity=".4"/>
+      <text x="20" y="43" font-family="Inconsolata" font-size="8" fill="#0f3d30">← LOWER POWER · SIMPLER · CHEAPER</text>
+      <text x="840" y="43" text-anchor="end" font-family="Inconsolata" font-size="8" fill="#4a1080">HIGHER POWER · MORE CAPABLE → </text>
+
+      <!-- Points on spectrum -->
+      <g font-family="Inconsolata" font-size="8.5" text-anchor="middle">
+        <circle cx="85" cy="56" r="7" fill="var(--teal)" filter="url(#gg)"/>
+        <text x="85" y="83" fill="#00e5b0">ATmega</text>
+        <text x="85" y="94" fill="#006644">328P</text>
+        <text x="85" y="105" fill="#0f3d30">20MHz·2KB</text>
+
+        <circle cx="200" cy="56" r="7" fill="var(--cyan)"/>
+        <text x="200" y="83" fill="#00fff5">ESP8266</text>
+        <text x="200" y="94" fill="#006666">80MHz WiFi</text>
+        <text x="200" y="105" fill="#0f3d30">80KB RAM</text>
+
+        <circle cx="320" cy="56" r="8" fill="var(--amber)" filter="url(#gg)"/>
+        <text x="320" y="83" fill="#ffbe00">ESP32</text>
+        <text x="320" y="94" fill="#4d3800">240MHz Dual</text>
+        <text x="320" y="105" fill="#0f3d30">WiFi+BT·520KB</text>
+
+        <circle cx="440" cy="56" r="7" fill="var(--orange)"/>
+        <text x="440" y="83" fill="#ff7c2a">RP2040</text>
+        <text x="440" y="94" fill="#4d1a00">133MHz Dual</text>
+        <text x="440" y="105" fill="#0f3d30">264KB SRAM</text>
+
+        <circle cx="570" cy="56" r="8" fill="var(--green)" filter="url(#gg)"/>
+        <text x="570" y="83" fill="#39ff14">RPi Zero 2W</text>
+        <text x="570" y="94" fill="#0d4000">1GHz Quad</text>
+        <text x="570" y="105" fill="#0f3d30">512MB · Linux</text>
+
+        <circle cx="700" cy="56" r="9" fill="var(--violet)" filter="url(#gg)"/>
+        <text x="700" y="83" fill="#a855f7">Raspberry Pi 5</text>
+        <text x="700" y="94" fill="#4a1080">2.4GHz Quad</text>
+        <text x="700" y="105" fill="#0f3d30">8GB RAM · Linux</text>
+
+        <circle cx="820" cy="56" r="8" fill="var(--pink)"/>
+        <text x="820" y="83" fill="#ff3fa4">NVIDIA Jetson</text>
+        <text x="820" y="94" fill="#4d0030">Nano/Orin</text>
+        <text x="820" y="105" fill="#0f3d30">AI/ML Edge GPU</text>
+      </g>
+    </svg>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-bottom:16px;">
+    <div class="device-card" style="--cl:var(--teal)">
+      <span class="device-icon">🔵</span>
+      <div class="device-name">Arduino Uno (ATmega328P)</div>
+      <div class="device-cat">MCU · Beginner Friendly</div>
+      <p class="device-desc">The gateway drug of IoT. 8-bit AVR microcontroller at 16 MHz. 32KB Flash, 2KB SRAM. 14 digital I/O pins, 6 analog inputs. No OS — direct register control. Perfect for sensor reading, motor control, and learning embedded systems.</p>
+      <div class="device-spec">16MHz · 32KB Flash · 5V · ~50mA active · $4 clone / $25 genuine</div>
+    </div>
+    <div class="device-card" style="--cl:var(--cyan)">
+      <span class="device-icon">📡</span>
+      <div class="device-name">ESP8266 (NodeMCU)</div>
+      <div class="device-cat">WiFi SoC · Low Cost</div>
+      <p class="device-desc">First affordable WiFi-enabled microcontroller. 32-bit Tensilica at 80MHz. Built-in TCP/IP stack, 802.11b/g/n WiFi. Runs MicroPython or Arduino code. Transformed DIY IoT with sub-$2 WiFi connectivity.</p>
+      <div class="device-spec">80MHz · 80KB RAM · WiFi 2.4GHz · 3.3V · ~80mA active · ~$2</div>
+    </div>
+    <div class="device-card" style="--cl:var(--amber)">
+      <span class="device-icon">⚡</span>
+      <div class="device-name">ESP32</div>
+      <div class="device-cat">Dual-Core SoC · Most Popular IoT</div>
+      <p class="device-desc">The current king of maker IoT. Dual-core Xtensa LX6 at 240MHz with WiFi + Bluetooth 4.2/5.0 + BLE. Hardware AES/SHA acceleration. Deep sleep at 10µA — ideal for battery projects. 34 GPIO pins.</p>
+      <div class="device-spec">240MHz dual-core · 520KB SRAM · WiFi + BT5 · 10µA deep sleep · ~$4</div>
+    </div>
+    <div class="device-card" style="--cl:var(--orange)">
+      <span class="device-icon">🍓</span>
+      <div class="device-name">Raspberry Pi Pico / RP2040</div>
+      <div class="device-cat">MCU · Programmable IO</div>
+      <p class="device-desc">RP2040 chip with dual ARM Cortex-M0+ at 133MHz. Unique PIO (Programmable I/O) state machines can emulate any digital protocol. 264KB SRAM. Pico W adds CYW43439 WiFi/BT chip. Very low cost.</p>
+      <div class="device-spec">133MHz · 264KB SRAM · 2MB Flash · 26 GPIO · PIO · ~$6 (Pico W)</div>
+    </div>
+    <div class="device-card" style="--cl:var(--green)">
+      <span class="device-icon">🫐</span>
+      <div class="device-name">Raspberry Pi 4/5</div>
+      <div class="device-cat">SBC · Full Linux</div>
+      <p class="device-desc">Full ARM Linux computer. Quad-core ARM Cortex-A72/A76, up to 8GB RAM, dual 4K display, USB 3.0, Gigabit Ethernet, WiFi, BT. Runs full Ubuntu/Debian. Gateway device, edge server, or complex processing hub.</p>
+      <div class="device-spec">RPi 5: 2.4GHz · up to 8GB · PCIe 2.0 · 2× USB 3 · ~$80</div>
+    </div>
+    <div class="device-card" style="--cl:var(--blue)">
+      <span class="device-icon">🔷</span>
+      <div class="device-name">STM32 (STMicroelectronics)</div>
+      <div class="device-cat">ARM MCU · Industrial Grade</div>
+      <p class="device-desc">Professional-grade ARM Cortex-M0/M4/M7 MCUs. Used in real products — cars, medical devices, industrial controllers. Extensive peripherals: ADC, DAC, timers, communication buses. STM32CubeIDE for development.</p>
+      <div class="device-spec">Up to 480MHz · 1MB+ RAM · FPU · CAN/Ethernet · -40°C to +125°C</div>
+    </div>
+    <div class="device-card" style="--cl:var(--violet)">
+      <span class="device-icon">🔋</span>
+      <div class="device-name">Nordic nRF52840</div>
+      <div class="device-cat">BLE SoC · Ultra-Low Power</div>
+      <p class="device-desc">The gold standard for BLE IoT devices. ARM Cortex-M4F at 64MHz, 1MB Flash, 256KB RAM, Bluetooth 5.0, Zigbee, Thread, USB. Used in commercial BLE products. nRF Connect SDK for professional development.</p>
+      <div class="device-spec">64MHz · BT5 + Zigbee + Thread · USB · 0.3µA deep sleep · $5</div>
+    </div>
+    <div class="device-card" style="--cl:var(--pink)">
+      <span class="device-icon">🤖</span>
+      <div class="device-name">NVIDIA Jetson Nano/Orin</div>
+      <div class="device-cat">Edge AI · Vision Processing</div>
+      <p class="device-desc">AI/ML edge computing platform with GPU. Jetson Nano: 128-core Maxwell GPU, 4GB RAM — runs full CV models. Jetson Orin: up to 275 TOPS AI performance. Used in autonomous robots, smart cameras, facial recognition.</p>
+      <div class="device-spec">Orin Nano: 40 TOPS · 8GB · 4× USB · M.2 NVMe · ~$200</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════
+  5 — PROTOCOLS
+═══════════════════════════ -->
+<div id="p-protocols" class="panel">
+<div class="wrap">
+  <div class="sec">
+    <div class="tag">Chapter 5 — Communication</div>
+    <h2>IoT Communication Protocols — How Devices Talk</h2>
+    <p>IoT devices communicate using specialised protocols optimised for constrained environments — low bandwidth, intermittent connectivity, limited power, and embedded processing. Understanding the protocol stack is essential for building reliable IoT systems.</p>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>MQTT — THE BACKBONE OF IoT MESSAGING</div>
+    <svg viewBox="0 0 860 280" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="mfg"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <marker id="mfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#00e5b0" opacity=".8"/></marker>
+        <marker id="mfb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#ffbe00" opacity=".8"/></marker>
+      </defs>
+      <rect width="860" height="280" fill="#020a07"/>
+
+      <!-- MQTT Broker (center) -->
+      <rect x="340" y="90" width="180" height="100" rx="6" fill="rgba(0,229,176,.08)" stroke="#00e5b0" stroke-width="2" filter="url(#mfg)"/>
+      <text x="430" y="118" text-anchor="middle" font-family="Audiowide" font-size="11" fill="#00e5b0">MQTT BROKER</text>
+      <text x="430" y="135" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#006644">Mosquitto / HiveMQ</text>
+      <text x="430" y="150" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#006644">AWS IoT Core</text>
+      <text x="430" y="168" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#006644">port 1883 / 8883 (TLS)</text>
+      <!-- Broker pulse -->
+      <circle cx="430" cy="140" r="55" fill="none" stroke="#00e5b0" stroke-width="1" opacity="0">
+        <animate attributeName="r" values="55;100" dur="2.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".5;0" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+
+      <!-- Publishers (left) -->
+      <rect x="30" y="60" width="130" height="60" rx="4" fill="rgba(0,255,245,.06)" stroke="#00fff5" stroke-width="1.5"/>
+      <text x="95" y="82" text-anchor="middle" font-family="Inconsolata" font-size="9" fill="#00fff5">PUBLISHER</text>
+      <text x="95" y="97" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#006666">ESP32 sensor</text>
+      <text x="95" y="110" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006666">home/temp → 23.5°C</text>
+
+      <rect x="30" y="160" width="130" height="60" rx="4" fill="rgba(0,255,245,.06)" stroke="#00fff5" stroke-width="1.5"/>
+      <text x="95" y="182" text-anchor="middle" font-family="Inconsolata" font-size="9" fill="#00fff5">PUBLISHER</text>
+      <text x="95" y="197" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#006666">Arduino motion</text>
+      <text x="95" y="210" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006666">home/motion → 1</text>
+
+      <!-- Subscribers (right) -->
+      <rect x="700" y="40" width="145" height="60" rx="4" fill="rgba(255,190,0,.06)" stroke="#ffbe00" stroke-width="1.5"/>
+      <text x="772" y="62" text-anchor="middle" font-family="Inconsolata" font-size="9" fill="#ffbe00">SUBSCRIBER</text>
+      <text x="772" y="77" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#4d3800">Mobile App</text>
+      <text x="772" y="90" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">subscribe: home/#</text>
+
+      <rect x="700" y="120" width="145" height="60" rx="4" fill="rgba(255,190,0,.06)" stroke="#ffbe00" stroke-width="1.5"/>
+      <text x="772" y="142" text-anchor="middle" font-family="Inconsolata" font-size="9" fill="#ffbe00">SUBSCRIBER</text>
+      <text x="772" y="157" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#4d3800">Node-RED flow</text>
+      <text x="772" y="170" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">subscribe: home/temp</text>
+
+      <rect x="700" y="200" width="145" height="60" rx="4" fill="rgba(255,190,0,.06)" stroke="#ffbe00" stroke-width="1.5"/>
+      <text x="772" y="222" text-anchor="middle" font-family="Inconsolata" font-size="9" fill="#ffbe00">SUBSCRIBER</text>
+      <text x="772" y="237" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#4d3800">Grafana dashboard</text>
+      <text x="772" y="250" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">subscribe: home/+</text>
+
+      <!-- Arrows PUBLISH to broker -->
+      <path d="M162,90 L338,130" fill="none" stroke="#00fff5" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#mfa)"><animate attributeName="stroke-dashoffset" values="0;-90" dur="1.5s" repeatCount="indefinite"/></path>
+      <path d="M162,190 L338,155" fill="none" stroke="#00fff5" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#mfa)"><animate attributeName="stroke-dashoffset" values="0;-90" dur="1.7s" repeatCount="indefinite"/></path>
+      <text x="235" y="118" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#006666">PUBLISH</text>
+
+      <!-- Arrows SUBSCRIBE from broker -->
+      <path d="M522,135 L698,68" fill="none" stroke="#ffbe00" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#mfb)"><animate attributeName="stroke-dashoffset" values="0;-90" dur="1.5s" repeatCount="indefinite" begin="-0.5s"/></path>
+      <path d="M522,140 L698,148" fill="none" stroke="#ffbe00" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#mfb)"><animate attributeName="stroke-dashoffset" values="0;-90" dur="1.6s" repeatCount="indefinite" begin="-0.7s"/></path>
+      <path d="M522,148 L698,228" fill="none" stroke="#ffbe00" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#mfb)"><animate attributeName="stroke-dashoffset" values="0;-90" dur="1.8s" repeatCount="indefinite" begin="-0.3s"/></path>
+      <text x="625" y="115" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#4d3800">DELIVER</text>
+
+      <!-- Topic structure -->
+      <rect x="200" y="245" width="460" height="30" rx="3" fill="rgba(0,229,176,.04)" stroke="rgba(0,229,176,.2)" stroke-width="1"/>
+      <text x="430" y="257" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#006644">TOPIC: building/floor2/room5/temperature  · QoS: 0 (fire-forget) | 1 (at least once) | 2 (exactly once)</text>
+      <text x="430" y="269" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#006644">Wildcard + = one level · # = all sub-levels  · Payload: JSON/binary/plain text</text>
+    </svg>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>IoT PROTOCOL COMPARISON TABLE</div>
+    <table class="proto-table">
+      <tr>
+        <th>PROTOCOL</th><th>LAYER</th><th>TRANSPORT</th><th>RANGE</th><th>POWER</th><th>BEST FOR</th><th>OVERHEAD</th>
+      </tr>
+      <tr><td class="pname">MQTT</td><td class="text">App</td><td>TCP/IP</td><td class="text">Internet</td><td class="pgood">Very Low</td><td class="text">Sensor telemetry, IoT backbone</td><td class="pgood">2-byte header</td></tr>
+      <tr><td class="pname">HTTP/HTTPS</td><td>App</td><td>TCP/IP</td><td>Internet</td><td class="pbad">High</td><td>REST APIs, device management</td><td class="pbad">Large headers</td></tr>
+      <tr><td class="pname">CoAP</td><td>App</td><td>UDP</td><td>Internet</td><td class="pgood">Low</td><td>Constrained devices (6LoWPAN)</td><td class="pgood">4-byte header</td></tr>
+      <tr><td class="pname">WebSocket</td><td>App</td><td>TCP</td><td>Internet</td><td class="pval">Medium</td><td>Real-time bidirectional dashboard</td><td class="pval">Medium</td></tr>
+      <tr><td class="pname">AMQP</td><td>App</td><td>TCP</td><td>Enterprise</td><td class="pbad">High</td><td>Enterprise message queuing</td><td class="pbad">Heavy</td></tr>
+      <tr><td class="pname">I2C</td><td>HW Bus</td><td>Wire (2-pin)</td><td class="pgood">cm–1m</td><td class="pgood">Very Low</td><td>Sensor to MCU (SDA+SCL)</td><td class="pgood">Minimal</td></tr>
+      <tr><td class="pname">SPI</td><td>HW Bus</td><td>Wire (4-pin)</td><td class="pgood">cm–1m</td><td class="pgood">Very Low</td><td>High-speed peripherals (MOSI/MISO)</td><td class="pgood">Minimal</td></tr>
+      <tr><td class="pname">UART/Serial</td><td>HW Bus</td><td>Wire (2-pin)</td><td class="pgood">short</td><td class="pgood">Very Low</td><td>Debug, GPS, Bluetooth modules</td><td class="pgood">Minimal</td></tr>
+    </table>
+  </div>
+
+  <div class="three-col">
+    <div class="card" style="--cl:var(--teal)"><h4>MQTT Deep Dive</h4><p>MQTT (Message Queuing Telemetry Transport) was created by IBM in 1999 for pipeline SCADA. Publish-subscribe model via a broker. Three QoS levels: <code>0</code>=fire and forget, <code>1</code>=at-least-once, <code>2</code>=exactly-once. Retained messages give new subscribers the last value immediately.</p></div>
+    <div class="card" style="--cl:var(--amber)"><h4>CoAP — Constrained Application Protocol</h4><p>IETF RFC 7252. Designed for very constrained devices (8-bit MCUs, lossy networks). Uses UDP instead of TCP (lower overhead). REST-like (GET/POST/PUT/DELETE) but binary-encoded. Supports multicast for device discovery. Maps to HTTP via proxy.</p></div>
+    <div class="card" style="--cl:var(--orange)"><h4>I2C Bus (Wire Library)</h4><p>Two-wire serial: <code>SDA</code> (data) + <code>SCL</code> (clock). Multi-master, multi-slave. Each device has 7-bit address (up to 127 devices on one bus). Speeds: 100kHz (standard), 400kHz (fast), 3.4MHz (high-speed). Pull-up resistors required. Used by most sensors.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════
+  6 — NETWORKS
+═══════════════════════════ -->
+<div id="p-networks" class="panel">
+<div class="wrap">
+  <div class="sec">
+    <div class="tag">Chapter 6 — Connectivity</div>
+    <h2>IoT Networks &amp; Wireless Technologies</h2>
+    <p>No single wireless technology fits all IoT scenarios. The choice depends on range, data rate, power consumption, and cost. From Bluetooth inside your ear to LoRa across a 15km farm — each technology fills a specific niche.</p>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>WIRELESS TECHNOLOGY RANGE vs DATA RATE MAP</div>
+    <svg viewBox="0 0 860 320" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="nfg"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="860" height="320" fill="#020a07"/>
+
+      <!-- Axes -->
+      <line x1="60" y1="20" x2="60" y2="285" stroke="#0d3d32" stroke-width="1.5"/>
+      <line x1="60" y1="285" x2="845" y2="285" stroke="#0d3d32" stroke-width="1.5"/>
+
+      <!-- Axis labels -->
+      <text x="453" y="308" text-anchor="middle" font-family="Inconsolata" font-size="9" fill="#0f3d30" letter-spacing="2">RANGE →</text>
+      <text x="20" y="155" text-anchor="middle" font-family="Inconsolata" font-size="9" fill="#0f3d30" transform="rotate(-90,20,155)" letter-spacing="2">DATA RATE ↑</text>
+
+      <!-- Range tick marks -->
+      <g font-family="Inconsolata" font-size="8" fill="#0f3d30" text-anchor="middle">
+        <text x="120" y="298">1m</text>
+        <text x="220" y="298">10m</text>
+        <text x="340" y="298">100m</text>
+        <text x="480" y="298">1km</text>
+        <text x="620" y="298">10km</text>
+        <text x="780" y="298">50km+</text>
+      </g>
+
+      <!-- Technology bubbles -->
+      <!-- NFC -->
+      <circle cx="80" cy="200" r="22" fill="rgba(0,229,176,.1)" stroke="#00e5b0" stroke-width="1.5" filter="url(#nfg)"/>
+      <text x="80" y="197" text-anchor="middle" font-family="Audiowide" font-size="7" fill="#00e5b0">NFC</text>
+      <text x="80" y="208" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#006644">~10cm</text>
+      <text x="80" y="230" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">400kbps</text>
+
+      <!-- Zigbee -->
+      <circle cx="260" cy="230" r="26" fill="rgba(0,255,245,.08)" stroke="#00fff5" stroke-width="1.5" filter="url(#nfg)"/>
+      <text x="260" y="226" text-anchor="middle" font-family="Audiowide" font-size="7.5" fill="#00fff5">Zigbee</text>
+      <text x="260" y="238" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#006666">10–100m</text>
+      <text x="260" y="262" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">250kbps · mesh</text>
+
+      <!-- BLE -->
+      <circle cx="200" cy="175" r="28" fill="rgba(33,150,255,.08)" stroke="#2196ff" stroke-width="1.5" filter="url(#nfg)"/>
+      <text x="200" y="171" text-anchor="middle" font-family="Audiowide" font-size="7.5" fill="#2196ff">BLE</text>
+      <text x="200" y="183" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0d3a6b">10–100m</text>
+      <text x="200" y="207" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">1–3Mbps · BT5</text>
+
+      <!-- WiFi -->
+      <circle cx="330" cy="90" r="38" fill="rgba(255,190,0,.08)" stroke="#ffbe00" stroke-width="2" filter="url(#nfg)"/>
+      <text x="330" y="86" text-anchor="middle" font-family="Audiowide" font-size="9" fill="#ffbe00">WiFi</text>
+      <text x="330" y="100" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">50–300m</text>
+      <text x="330" y="135" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">WiFi 6: 9.6Gbps</text>
+
+      <!-- Thread/Matter -->
+      <circle cx="380" cy="230" r="24" fill="rgba(168,85,247,.08)" stroke="#a855f7" stroke-width="1.5"/>
+      <text x="380" y="226" text-anchor="middle" font-family="Audiowide" font-size="7" fill="#a855f7">Thread</text>
+      <text x="380" y="238" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#4a1080">100m mesh</text>
+      <text x="380" y="256" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">250kbps IPv6</text>
+
+      <!-- Z-Wave -->
+      <circle cx="290" cy="270" r="18" fill="rgba(57,255,20,.07)" stroke="#39ff14" stroke-width="1.3"/>
+      <text x="290" y="266" text-anchor="middle" font-family="Audiowide" font-size="6.5" fill="#39ff14">Z-Wave</text>
+      <text x="290" y="276" text-anchor="middle" font-family="Inconsolata" font-size="6.5" fill="#0d4000">30m · 100kbps</text>
+
+      <!-- 4G/LTE -->
+      <circle cx="560" cy="130" r="38" fill="rgba(255,124,42,.08)" stroke="#ff7c2a" stroke-width="2" filter="url(#nfg)"/>
+      <text x="560" y="125" text-anchor="middle" font-family="Audiowide" font-size="9" fill="#ff7c2a">4G/LTE</text>
+      <text x="560" y="140" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d1a00">km range</text>
+      <text x="560" y="170" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">up to 100 Mbps</text>
+
+      <!-- 5G -->
+      <circle cx="480" cy="50" r="30" fill="rgba(255,63,164,.08)" stroke="#ff3fa4" stroke-width="2" filter="url(#nfg)"/>
+      <text x="480" y="46" text-anchor="middle" font-family="Audiowide" font-size="9" fill="#ff3fa4">5G</text>
+      <text x="480" y="60" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0030">urban km</text>
+      <text x="480" y="83" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">20 Gbps peak</text>
+
+      <!-- NB-IoT -->
+      <circle cx="680" cy="250" r="30" fill="rgba(0,255,245,.07)" stroke="#00fff5" stroke-width="1.8" filter="url(#nfg)"/>
+      <text x="680" y="245" text-anchor="middle" font-family="Audiowide" font-size="7.5" fill="#00fff5">NB-IoT</text>
+      <text x="680" y="258" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006666">10+ km</text>
+      <text x="680" y="282" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">250kbps · LTE-M</text>
+
+      <!-- LoRa -->
+      <circle cx="780" cy="220" r="40" fill="rgba(57,255,20,.07)" stroke="#39ff14" stroke-width="2" filter="url(#nfg)"/>
+      <text x="780" y="214" text-anchor="middle" font-family="Audiowide" font-size="10" fill="#39ff14">LoRa</text>
+      <text x="780" y="230" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#0d4000">2–15 km</text>
+      <text x="780" y="260" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">0.3–50 kbps</text>
+      <text x="780" y="272" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">ultra-low power!</text>
+
+      <!-- Satellite IoT -->
+      <circle cx="820" cy="60" r="28" fill="rgba(168,85,247,.07)" stroke="#a855f7" stroke-width="1.5"/>
+      <text x="820" y="55" text-anchor="middle" font-family="Audiowide" font-size="7" fill="#a855f7">Satellite</text>
+      <text x="820" y="67" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#4a1080">global!</text>
+      <text x="820" y="90" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#0f3d30">Starlink IoT</text>
+    </svg>
+  </div>
+
+  <div class="three-col">
+    <div class="card" style="--cl:var(--green)"><h4>LoRa / LoRaWAN</h4><p>Long Range (LoRa) uses chirp spread spectrum modulation on unlicensed sub-GHz bands (868MHz EU, 915MHz US). Range: 2–15km rural, 2–5km urban. Battery lasts 5–10 years. LoRaWAN adds the MAC layer and network server. Perfect for smart agriculture, asset tracking, water meters.</p><div class="badge">LPWAN: Low Power Wide Area Network</div></div>
+    <div class="card" style="--cl:var(--cyan)"><h4>Zigbee &amp; Thread / Matter</h4><p><code>Zigbee</code>: 802.15.4 mesh networking, 250kbps, self-healing mesh up to 65,000 nodes. Smart home standard (Philips Hue, IKEA). <code>Thread</code>: IP-based 802.15.4 mesh (IPv6). <code>Matter</code>: unified smart home standard built on Thread/WiFi, backed by Apple/Google/Amazon — the future of smart home.</p></div>
+    <div class="card" style="--cl:var(--orange)"><h4>Cellular IoT (NB-IoT / LTE-M)</h4><p>NB-IoT (Narrowband IoT): up to 10km, ultra-low power, penetrates deep into buildings. LTE-M: higher data rate, supports voice, mobile devices. Both use existing cellular infrastructure. Ideal for smart meters, fleet tracking, and any scenario needing cellular coverage without WiFi infrastructure.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════
+  7 — CLOUD & DATA
+═══════════════════════════ -->
+<div id="p-cloud" class="panel">
+<div class="wrap">
+  <div class="sec">
+    <div class="tag">Chapter 7 — Cloud & Data</div>
+    <h2>IoT Cloud Platforms &amp; Data Processing</h2>
+    <p>The cloud is where IoT data transforms into intelligence. From raw sensor readings to actionable business insights — cloud platforms provide the storage, processing, machine learning, and visualisation tools that make IoT valuable at scale.</p>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>IoT DATA PIPELINE — FROM SENSOR TO DASHBOARD</div>
+    <svg viewBox="0 0 860 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="ppa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#00e5b0"/></marker>
+        <filter id="ppg"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="860" height="200" fill="#020a07"/>
+
+      <g>
+        <!-- Step 1: Device -->
+        <rect x="12" y="50" width="110" height="100" rx="4" fill="rgba(0,255,245,.06)" stroke="#00fff5" stroke-width="1.5" filter="url(#ppg)"/>
+        <text x="67" y="76" text-anchor="middle" font-size="18">📟</text>
+        <text x="67" y="96" text-anchor="middle" font-family="Audiowide" font-size="7.5" fill="#00fff5">DEVICE</text>
+        <text x="67" y="112" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006666">{"temp":23.5,</text>
+        <text x="67" y="124" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006666">"ts":1712345678}</text>
+        <text x="67" y="140" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#00fff5">MQTT publish</text>
+
+        <path d="M124,100 L150,100" fill="none" stroke="#00e5b0" stroke-width="1.5" marker-end="url(#ppa)" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="1s" repeatCount="indefinite"/></path>
+
+        <!-- Step 2: Message Broker -->
+        <rect x="152" y="50" width="110" height="100" rx="4" fill="rgba(0,229,176,.07)" stroke="#00e5b0" stroke-width="1.8" filter="url(#ppg)"/>
+        <text x="207" y="76" text-anchor="middle" font-size="18">📬</text>
+        <text x="207" y="96" text-anchor="middle" font-family="Audiowide" font-size="7.5" fill="#00e5b0">BROKER</text>
+        <text x="207" y="112" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006644">Mosquitto</text>
+        <text x="207" y="124" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006644">HiveMQ</text>
+        <text x="207" y="140" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#00e5b0">route by topic</text>
+
+        <path d="M264,100 L290,100" fill="none" stroke="#00e5b0" stroke-width="1.5" marker-end="url(#ppa)" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="1s" repeatCount="indefinite" begin="-0.2s"/></path>
+
+        <!-- Step 3: Stream Processing -->
+        <rect x="292" y="50" width="110" height="100" rx="4" fill="rgba(255,190,0,.06)" stroke="#ffbe00" stroke-width="1.5"/>
+        <text x="347" y="76" text-anchor="middle" font-size="18">⚡</text>
+        <text x="347" y="93" text-anchor="middle" font-family="Audiowide" font-size="6.5" fill="#ffbe00">STREAM PROC</text>
+        <text x="347" y="110" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">Apache Kafka</text>
+        <text x="347" y="124" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d3800">Apache Flink</text>
+        <text x="347" y="138" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#ffbe00">filter, enrich</text>
+
+        <path d="M404,100 L430,100" fill="none" stroke="#ffbe00" stroke-width="1.5" marker-end="url(#ppa)" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="1s" repeatCount="indefinite" begin="-0.4s"/></path>
+
+        <!-- Step 4: Time-Series DB -->
+        <rect x="432" y="50" width="110" height="100" rx="4" fill="rgba(168,85,247,.06)" stroke="#a855f7" stroke-width="1.5"/>
+        <text x="487" y="76" text-anchor="middle" font-size="18">🗄️</text>
+        <text x="487" y="93" text-anchor="middle" font-family="Audiowide" font-size="7" fill="#a855f7">TIME-SERIES</text>
+        <text x="487" y="110" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4a1080">InfluxDB</text>
+        <text x="487" y="124" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4a1080">TimescaleDB</text>
+        <text x="487" y="138" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#a855f7">store + query</text>
+
+        <path d="M544,100 L570,100" fill="none" stroke="#a855f7" stroke-width="1.5" marker-end="url(#ppa)" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="1s" repeatCount="indefinite" begin="-0.6s"/></path>
+
+        <!-- Step 5: Analytics / ML -->
+        <rect x="572" y="50" width="110" height="100" rx="4" fill="rgba(255,124,42,.06)" stroke="#ff7c2a" stroke-width="1.5"/>
+        <text x="627" y="76" text-anchor="middle" font-size="18">🤖</text>
+        <text x="627" y="93" text-anchor="middle" font-family="Audiowide" font-size="7" fill="#ff7c2a">ANALYTICS/ML</text>
+        <text x="627" y="110" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d1a00">Jupyter / TF</text>
+        <text x="627" y="124" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d1a00">anomaly detect</text>
+        <text x="627" y="138" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#ff7c2a">predict + alert</text>
+
+        <path d="M684,100 L710,100" fill="none" stroke="#ff7c2a" stroke-width="1.5" marker-end="url(#ppa)" stroke-dasharray="5 3"><animate attributeName="stroke-dashoffset" values="0;-28" dur="1s" repeatCount="indefinite" begin="-0.8s"/></path>
+
+        <!-- Step 6: Dashboard -->
+        <rect x="712" y="50" width="136" height="100" rx="4" fill="rgba(57,255,20,.06)" stroke="#39ff14" stroke-width="1.8" filter="url(#ppg)"/>
+        <text x="780" y="76" text-anchor="middle" font-size="18">📊</text>
+        <text x="780" y="93" text-anchor="middle" font-family="Audiowide" font-size="7.5" fill="#39ff14">DASHBOARD</text>
+        <text x="780" y="110" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0d4000">Grafana</text>
+        <text x="780" y="124" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0d4000">Node-RED UI</text>
+        <text x="780" y="138" text-anchor="middle" font-family="Inconsolata" font-size="7" fill="#39ff14">visualise + alert</text>
+      </g>
+
+      <!-- Latency annotation -->
+      <text x="67" y="174" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0f3d30">ms</text>
+      <text x="207" y="174" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0f3d30">ms</text>
+      <text x="347" y="174" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0f3d30">ms–s</text>
+      <text x="487" y="174" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0f3d30">persistent</text>
+      <text x="627" y="174" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0f3d30">batch/stream</text>
+      <text x="780" y="174" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#0f3d30">real-time</text>
+
+      <text x="430" y="195" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#0f3d30">Data velocity: from 1 reading/hour (smart meter) to 10,000 readings/second (industrial vibration sensor)</text>
+    </svg>
+  </div>
+
+  <div class="three-col">
+    <div class="card" style="--cl:var(--violet)"><h4>Major IoT Cloud Platforms</h4><p><code>AWS IoT Core</code>: MQTT broker, rules engine, device shadow, Greengrass edge.<br><code>Azure IoT Hub</code>: device registry, D2C/C2D messaging, stream analytics.<br><code>Google Cloud IoT</code>: Pub/Sub, BigQuery, TensorFlow.<br><code>ThingSpeak</code>: beginner-friendly, free tier, MATLAB analytics.<br><code>Blynk/Losant</code>: no-code/low-code IoT dashboards.</p></div>
+    <div class="card" style="--cl:var(--teal)"><h4>Time-Series Databases</h4><p>IoT data is inherently time-stamped. Regular SQL databases struggle at millions of sensor readings. TSDBs optimise for time-ordered writes and range queries: <code>InfluxDB</code> (most popular), <code>TimescaleDB</code> (PostgreSQL extension), <code>OpenTSDB</code> (Hadoop-backed), <code>Prometheus</code> (monitoring). Can store billions of data points efficiently.</p></div>
+    <div class="card" style="--cl:var(--amber)"><h4>Device Twin / Shadow</h4><p>AWS IoT Device Shadow and Azure Device Twin maintain a JSON document representing device state — even when the device is offline. The shadow stores reported state (from device) and desired state (from app). When device reconnects, it syncs with shadow. Eliminates need for always-on connections.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════
+  8 — SECURITY
+═══════════════════════════ -->
+<div id="p-security" class="panel">
+<div class="wrap">
+  <div class="sec">
+    <div class="tag">Chapter 8 — Security</div>
+    <h2>IoT Security — The Critical Challenge</h2>
+    <p>IoT security is one of the most serious challenges of our time. Billions of resource-constrained devices are deployed in physical spaces, many with weak or no security, creating an unprecedented attack surface. The Mirai botnet (2016) hijacked 600,000 IoT devices to launch a record DDoS attack.</p>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>IoT ATTACK SURFACE &amp; THREAT MODEL</div>
+    <svg viewBox="0 0 860 280" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="secg"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="860" height="280" fill="#020a07"/>
+
+      <!-- Central IoT system -->
+      <ellipse cx="430" cy="140" rx="80" ry="55" fill="rgba(0,229,176,.06)" stroke="#00e5b0" stroke-width="2" filter="url(#secg)"/>
+      <text x="430" y="133" text-anchor="middle" font-family="Audiowide" font-size="9" fill="#00e5b0">IoT</text>
+      <text x="430" y="147" text-anchor="middle" font-family="Audiowide" font-size="9" fill="#00e5b0">SYSTEM</text>
+      <text x="430" y="162" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#006644">Device+Gateway+Cloud</text>
+
+      <!-- Threats -->
+      <!-- Physical tampering -->
+      <rect x="30" y="30" width="145" height="70" rx="4" fill="rgba(255,69,69,.07)" stroke="#ff4545" stroke-width="1.5"/>
+      <text x="102" y="52" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#ff4545">⚠ PHYSICAL ATTACK</text>
+      <text x="102" y="67" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">Tamper · Firmware dump</text>
+      <text x="102" y="80" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">JTAG debug access</text>
+      <path d="M175,80 L350,120" fill="none" stroke="rgba(255,69,69,.5)" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+      <!-- Default credentials -->
+      <rect x="30" y="120" width="145" height="70" rx="4" fill="rgba(255,69,69,.07)" stroke="#ff4545" stroke-width="1.5"/>
+      <text x="102" y="142" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#ff4545">⚠ DEFAULT CREDS</text>
+      <text x="102" y="157" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">admin/admin · root/root</text>
+      <text x="102" y="170" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">Mirai botnet vector</text>
+      <path d="M175,155 L350,145" fill="none" stroke="rgba(255,69,69,.5)" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+      <!-- Network eavesdrop -->
+      <rect x="30" y="200" width="145" height="70" rx="4" fill="rgba(255,69,69,.07)" stroke="#ff4545" stroke-width="1.5"/>
+      <text x="102" y="222" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#ff4545">⚠ NETWORK ATTACK</text>
+      <text x="102" y="237" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">MITM · Replay attack</text>
+      <text x="102" y="250" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">Packet sniffing</text>
+      <path d="M175,225 L350,160" fill="none" stroke="rgba(255,69,69,.5)" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+      <!-- Firmware -->
+      <rect x="685" y="30" width="155" height="70" rx="4" fill="rgba(255,69,69,.07)" stroke="#ff4545" stroke-width="1.5"/>
+      <text x="762" y="52" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#ff4545">⚠ FIRMWARE VULN</text>
+      <text x="762" y="67" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">No OTA updates</text>
+      <text x="762" y="80" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">Buffer overflow</text>
+      <path d="M685,75 L512,120" fill="none" stroke="rgba(255,69,69,.5)" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+      <!-- Side channel -->
+      <rect x="685" y="120" width="155" height="70" rx="4" fill="rgba(255,69,69,.07)" stroke="#ff4545" stroke-width="1.5"/>
+      <text x="762" y="142" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#ff4545">⚠ SIDE CHANNEL</text>
+      <text x="762" y="157" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">Power analysis</text>
+      <text x="762" y="170" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">Timing attacks</text>
+      <path d="M685,155 L512,145" fill="none" stroke="rgba(255,69,69,.5)" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+      <!-- Supply chain -->
+      <rect x="685" y="200" width="155" height="70" rx="4" fill="rgba(255,69,69,.07)" stroke="#ff4545" stroke-width="1.5"/>
+      <text x="762" y="222" text-anchor="middle" font-family="Inconsolata" font-size="8.5" fill="#ff4545">⚠ SUPPLY CHAIN</text>
+      <text x="762" y="237" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">Malicious chips</text>
+      <text x="762" y="250" text-anchor="middle" font-family="Inconsolata" font-size="7.5" fill="#4d0000">Counterfeit parts</text>
+      <path d="M685,225 L512,160" fill="none" stroke="rgba(255,69,69,.5)" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+      <!-- Defences label -->
+      <text x="430" y="225" text-anchor="middle" font-family="Audiowide" font-size="9" fill="#00e5b0">DEFENCES</text>
+      <text x="430" y="242" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#006644">TLS/mTLS · Unique credentials · OTA signed updates · Secure boot · Hardware TPM</text>
+      <text x="430" y="255" text-anchor="middle" font-family="Inconsolata" font-size="8" fill="#006644">Certificate-based auth · Network segmentation · Intrusion detection · Minimal attack surface</text>
+    </svg>
+  </div>
+
+  <div class="three-col">
+    <div class="card" style="--cl:var(--red)"><h4>The Mirai Botnet (2016)</h4><p>Malware scanned the internet for IoT devices using default credentials (admin/admin). Infected 600,000+ cameras, DVRs, routers. Launched 1.2 Tbps DDoS attack — took down GitHub, Netflix, Twitter. Wake-up call for IoT security. Many countries now mandate unique default passwords by law.</p></div>
+    <div class="card" style="--cl:var(--teal)"><h4>Security Best Practices</h4><p>• Unique device credentials per unit<br>• TLS 1.2+ for all communication<br>• Signed OTA firmware updates<br>• Secure boot (verify firmware)<br>• Hardware Security Module (HSM/TPM)<br>• Network segmentation (IoT VLAN)<br>• Minimal open ports<br>• Regular vulnerability scanning<br>• OWASP IoT Top 10 checklist</p></div>
+    <div class="card" style="--cl:var(--amber)"><h4>PKI &amp; Certificate Auth</h4><p>X.509 certificates with mutual TLS (mTLS) is the gold standard. Each device has a unique certificate signed by a Certificate Authority. Both device and server authenticate each other. AWS IoT Core and Azure IoT Hub both support mTLS per device. Certificates can be revoked remotely if a device is compromised.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════
+  9 — APPLICATIONS
+═══════════════════════════ -->
+<div id="p-apps" class="panel">
+<div class="wrap">
+  <div class="sec">
+    <div class="tag">Chapter 9 — Applications</div>
+    <h2>IoT in the Real World — Transforming Every Industry</h2>
+    <p>IoT is not one application — it is a fundamental technology transformation across every sector of human activity. From the thermostat in your home to industrial robots to satellites — connected intelligence is reshaping how the world works.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;">
+    <div class="device-card" style="--cl:var(--teal)">
+      <span class="device-icon">🏠</span>
+      <div class="device-name">Smart Home</div>
+      <div class="device-cat">Consumer IoT</div>
+      <p class="device-desc">Voice assistants (Alexa, Google Home), smart thermostats (Nest: AI learns schedule, saves 12% heating), smart locks, security cameras, automated lighting (Zigbee/Z-Wave), robot vacuum cleaners (SLAM navigation).</p>
+      <div class="device-spec">🌍 1.3B smart home devices (2023) · Matter standard unifying ecosystem</div>
+    </div>
+    <div class="device-card" style="--cl:var(--amber)">
+      <span class="device-icon">🏭</span>
+      <div class="device-name">Industry 4.0 / IIoT</div>
+      <div class="device-cat">Industrial IoT</div>
+      <p class="device-desc">Predictive maintenance (vibration sensors on motors), quality control (computer vision), digital twin factories, asset tracking, autonomous mobile robots (AMRs), real-time OEE monitoring. Reduces downtime by 45%.</p>
+      <div class="device-spec">⚙️ GE Predix · Siemens MindSphere · $500B projected savings by 2030</div>
+    </div>
+    <div class="device-card" style="--cl:var(--green)">
+      <span class="device-icon">🌱</span>
+      <div class="device-name">Smart Agriculture</div>
+      <div class="device-cat">AgriTech / Precision Farming</div>
+      <p class="device-desc">Soil moisture sensors (automated irrigation saves 30–50% water), drone monitoring for crop health (NDVI imaging), weather stations, livestock tracking (GPS ear tags), automated greenhouses, pest/disease detection with AI.</p>
+      <div class="device-spec">🌾 LoRa covers entire farm · John Deere Operations Center · FarmBot robot</div>
+    </div>
+    <div class="device-card" style="--cl:var(--blue)">
+      <span class="device-icon">🏥</span>
+      <div class="device-name">Connected Healthcare</div>
+      <div class="device-cat">MedTech / Remote Patient Monitoring</div>
+      <p class="device-desc">Continuous glucose monitors (Abbott Libre), cardiac implants (Medtronic), smart inhalers (Propeller Health tracks usage), hospital asset tracking (RFID), remote ICU monitoring, wearable ECG patches, smart pills (ingestible sensors).</p>
+      <div class="device-spec">💓 Apple Watch detects AFib · Dexcom G7 real-time glucose CGM</div>
+    </div>
+    <div class="device-card" style="--cl:var(--orange)">
+      <span class="device-icon">🌆</span>
+      <div class="device-name">Smart Cities</div>
+      <div class="device-cat">Urban Infrastructure</div>
+      <p class="device-desc">Adaptive traffic lights (reduces congestion 25%), smart street lighting (dims when no movement, saves 80% energy), waste bin sensors (optimise collection routes), flood monitoring, air quality sensors, smart parking guidance.</p>
+      <div class="device-spec">🌐 Singapore Smart Nation · Barcelona smart city saves €42M/year</div>
+    </div>
+    <div class="device-card" style="--cl:var(--pink)">
+      <span class="device-icon">⌚</span>
+      <div class="device-name">Wearables</div>
+      <div class="device-cat">Consumer Health Tech</div>
+      <p class="device-desc">Fitness trackers (steps, heart rate, sleep), smartwatches (ECG, SpO2, fall detection), sports performance sensors (biomechanics), AR glasses, smart clothing (biometric-embedded fabrics), brain-computer interfaces (Neuralink).</p>
+      <div class="device-spec">👟 Nike Adapt auto-lacing · Oura Ring sleep AI · Whoop performance coach</div>
+    </div>
+    <div class="device-card" style="--cl:var(--violet)">
+      <span class="device-icon">🚗</span>
+      <div class="device-name">Connected Vehicles (V2X)</div>
+      <div class="device-cat">Automotive / Mobility</div>
+      <p class="device-desc">OBD-II telematics (insurance black boxes), fleet management (GPS + fuel monitoring), V2V (vehicle-to-vehicle safety messages), V2I (vehicle-to-infrastructure traffic signals), remote diagnostics, OTA software updates (Tesla), autonomous vehicle sensor fusion.</p>
+      <div class="device-spec">🚘 Modern car: 100+ ECUs, 60+ sensors · Tesla: 4TB data/day per car</div>
+    </div>
+    <div class="device-card" style="--cl:var(--cyan)">
+      <span class="device-icon">⚡</span>
+      <div class="device-name">Smart Energy Grid</div>
+      <div class="device-cat">Utilities / Clean Energy</div>
+      <p class="device-desc">Smart meters (real-time consumption, TOU pricing), demand response systems, solar micro-inverter monitoring, battery storage management (Tesla Powerwall), grid balancing with AI, wind turbine predictive maintenance, EV charging networks.</p>
+      <div class="device-spec">⚡ 1B smart meters by 2027 · Virtual Power Plant aggregates 1000s of homes</div>
+    </div>
+    <div class="device-card" style="--cl:var(--red)">
+      <span class="device-icon">🌊</span>
+      <div class="device-name">Environmental Monitoring</div>
+      <div class="device-cat">Environmental Science</div>
+      <p class="device-desc">Ocean buoy networks (temperature, salinity, pH for climate research), air quality monitoring (PM2.5, CO2, NOx in cities), earthquake early warning systems, flood sensors, glacier monitoring, wildfire detection with IR cameras + AI.</p>
+      <div class="device-spec">🌍 NOAA 1,200+ ocean buoys · NASA Global Hawk IoT climate sensors</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════
+  10 — IoT PROGRAMMING
+═══════════════════════════ -->
+<div id="p-code" class="panel">
+<div class="wrap">
+  <div class="sec">
+    <div class="tag">Chapter 10 — Programming</div>
+    <h2>IoT Programming — From Device to Cloud</h2>
+    <p>IoT programming spans from writing C/C++ on bare-metal microcontrollers to Python on Raspberry Pi to Node.js on cloud servers. Each layer of the stack uses different tools and languages. Here's a complete programming guide for each layer.</p>
+  </div>
+
+  <div class="two-even">
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>ARDUINO / ESP32 — SENSOR + MQTT PUBLISH (C++)</div>
+    <div class="codeblock">
+<span class="ln"> 1</span><span class="cm">// ESP32 reads DHT22 sensor + publishes to MQTT</span>
+<span class="ln"> 2</span><span class="kw">#include</span> <span class="st">&lt;WiFi.h&gt;</span>
+<span class="ln"> 3</span><span class="kw">#include</span> <span class="st">&lt;PubSubClient.h&gt;</span>
+<span class="ln"> 4</span><span class="kw">#include</span> <span class="st">&lt;DHT.h&gt;</span>
+<span class="ln"> 5</span>
+<span class="ln"> 6</span><span class="kw">const char*</span> ssid     = <span class="st">"MyWiFi"</span>;
+<span class="ln"> 7</span><span class="kw">const char*</span> password = <span class="st">"secret"</span>;
+<span class="ln"> 8</span><span class="kw">const char*</span> broker   = <span class="st">"broker.example.com"</span>;
+<span class="ln"> 9</span>
+<span class="ln">10</span><span class="cl2">WiFiClient</span>   wifiClient;
+<span class="ln">11</span><span class="cl2">PubSubClient</span> mqtt(wifiClient);
+<span class="ln">12</span><span class="cl2">DHT</span> dht(<span class="nm">4</span>, DHT22);    <span class="cm">// GPIO4</span>
+<span class="ln">13</span>
+<span class="ln">14</span><span class="kw">void</span> <span class="fn">setup</span>() {
+<span class="ln">15</span><span class="hl">    WiFi.<span class="fn">begin</span>(ssid, password);</span>
+<span class="ln">16</span>    <span class="kw">while</span>(WiFi.<span class="fn">status</span>() != WL_CONNECTED) delay(<span class="nm">500</span>);
+<span class="ln">17</span>    mqtt.<span class="fn">setServer</span>(broker, <span class="nm">1883</span>);
+<span class="ln">18</span>    dht.<span class="fn">begin</span>();
+<span class="ln">19</span>}
+<span class="ln">20</span>
+<span class="ln">21</span><span class="kw">void</span> <span class="fn">loop</span>() {
+<span class="ln">22</span>    <span class="kw">if</span> (!mqtt.<span class="fn">connected</span>()) mqtt.<span class="fn">connect</span>(<span class="st">"ESP32-device"</span>);
+<span class="ln">23</span>    <span class="kw">float</span> temp = dht.<span class="fn">readTemperature</span>();
+<span class="ln">24</span>    <span class="kw">float</span> humi = dht.<span class="fn">readHumidity</span>();
+<span class="ln">25</span>
+<span class="ln">26</span>    <span class="cm">// Build JSON payload</span>
+<span class="ln">27</span><span class="hl">    <span class="cl2">String</span> payload = <span class="st">"{\\"temp\":"</span> + String(temp)</span>
+<span class="ln">28</span><span class="hl">                   + <span class="st">",\\"humi\":"</span> + String(humi) + <span class="st">"}"</span>;</span>
+<span class="ln">29</span>
+<span class="ln">30</span>    mqtt.<span class="fn">publish</span>(<span class="st">"home/living/climate"</span>, payload.<span class="fn">c_str</span>());
+<span class="ln">31</span>    delay(<span class="nm">30000</span>);  <span class="cm">// every 30 seconds</span>
+<span class="ln">32</span>}
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>MICROPYTHON — RASPBERRY PI PICO W (SENSOR + HTTP)</div>
+    <div class="codeblock">
+<span class="ln"> 1</span><span class="cm"># MicroPython on Pico W — read sensor, POST to API</span>
+<span class="ln"> 2</span><span class="kw">import</span> network, urequests, ujson, time
+<span class="ln"> 3</span><span class="kw">from</span> machine <span class="kw">import</span> Pin, ADC
+<span class="ln"> 4</span>
+<span class="ln"> 5</span><span class="cm"># Connect to WiFi</span>
+<span class="ln"> 6</span>wlan = network.<span class="fn">WLAN</span>(network.STA_IF)
+<span class="ln"> 7</span>wlan.<span class="fn">active</span>(<span class="nm">True</span>)
+<span class="ln"> 8</span><span class="hl">wlan.<span class="fn">connect</span>(<span class="st">'MyWiFi'</span>, <span class="st">'secret'</span>)</span>
+<span class="ln"> 9</span><span class="kw">while not</span> wlan.<span class="fn">isconnected</span>(): time.<span class="fn">sleep</span>(<span class="nm">0.5</span>)
+<span class="ln">10</span>
+<span class="ln">11</span><span class="cm"># Read analog sensor (potentiometer / LDR)</span>
+<span class="ln">12</span>sensor = ADC(<span class="nm">26</span>)  <span class="cm"># GP26 = ADC0</span>
+<span class="ln">13</span>
+<span class="ln">14</span><span class="kw">def</span> <span class="fn">read_voltage</span>():
+<span class="ln">15</span>    raw = sensor.<span class="fn">read_u16</span>()       <span class="cm"># 0–65535</span>
+<span class="ln">16</span>    <span class="kw">return</span> raw * <span class="nm">3.3</span> / <span class="nm">65535</span>    <span class="cm"># convert to volts</span>
+<span class="ln">17</span>
+<span class="ln">18</span><span class="kw">while True</span>:
+<span class="ln">19</span>    v = <span class="fn">read_voltage</span>()
+<span class="ln">20</span><span class="hl">    data = ujson.<span class="fn">dumps</span>({<span class="st">'voltage'</span>: v, <span class="st">'unit'</span>:<span class="st">'V'</span>})</span>
+<span class="ln">21</span>    res = urequests.<span class="fn">post</span>(
+<span class="ln">22</span>        <span class="st">'https://api.example.com/sensor'</span>,
+<span class="ln">23</span>        data=data, headers={<span class="st">'Content-Type'</span>:<span class="st">'application/json'</span>}
+<span class="ln">24</span>    )
+<span class="ln">25</span>    time.<span class="fn">sleep</span>(<span class="nm">60</span>)
+    </div>
+  </div>
+  </div>
+
+  <div class="two-even">
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>PYTHON (RASPBERRY PI) — MQTT SUBSCRIBER + GPIO CONTROL</div>
+    <div class="codeblock">
+<span class="ln"> 1</span><span class="cm"># Raspberry Pi — subscribe to MQTT, control LED via GPIO</span>
+<span class="ln"> 2</span><span class="kw">import</span> paho.mqtt.client <span class="kw">as</span> mqtt
+<span class="ln"> 3</span><span class="kw">import</span> RPi.GPIO <span class="kw">as</span> GPIO, json
+<span class="ln"> 4</span>
+<span class="ln"> 5</span>LED_PIN = <span class="nm">18</span>
+<span class="ln"> 6</span>GPIO.<span class="fn">setmode</span>(GPIO.BCM)
+<span class="ln"> 7</span>GPIO.<span class="fn">setup</span>(LED_PIN, GPIO.OUT)
+<span class="ln"> 8</span>
+<span class="ln"> 9</span><span class="kw">def</span> <span class="fn">on_message</span>(client, userdata, msg):
+<span class="ln">10</span>    data = json.<span class="fn">loads</span>(msg.payload)
+<span class="ln">11</span><span class="hl">    <span class="kw">if</span> data[<span class="st">'command'</span>] == <span class="st">'ON'</span>:</span>
+<span class="ln">12</span>        GPIO.<span class="fn">output</span>(LED_PIN, GPIO.HIGH)
+<span class="ln">13</span>    <span class="kw">elif</span> data[<span class="st">'command'</span>] == <span class="st">'OFF'</span>:
+<span class="ln">14</span>        GPIO.<span class="fn">output</span>(LED_PIN, GPIO.LOW)
+<span class="ln">15</span>    <span class="kw">print</span>(<span class="fn">f</span><span class="st">"LED {data['command']}"</span>)
+<span class="ln">16</span>
+<span class="ln">17</span>client = mqtt.<span class="fn">Client</span>()
+<span class="ln">18</span>client.on_message = on_message
+<span class="ln">19</span>client.<span class="fn">connect</span>(<span class="st">"broker.example.com"</span>, <span class="nm">1883</span>)
+<span class="ln">20</span><span class="hl">client.<span class="fn">subscribe</span>(<span class="st">"home/led/control"</span>)</span>
+<span class="ln">21</span>client.<span class="fn">loop_forever</span>()
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="box-title"><div class="pip"></div>NODE.JS — IoT CLOUD BACKEND + WEBSOCKET DASHBOARD</div>
+    <div class="codeblock">
+<span class="ln"> 1</span><span class="cm">// Node.js IoT backend — MQTT → WebSocket → browser</span>
+<span class="ln"> 2</span><span class="kw">const</span> mqtt = <span class="fn">require</span>(<span class="st">'mqtt'</span>);
+<span class="ln"> 3</span><span class="kw">const</span> WebSocket = <span class="fn">require</span>(<span class="st">'ws'</span>);
+<span class="ln"> 4</span><span class="kw">const</span> { InfluxDB } = <span class="fn">require</span>(<span class="st">'@influxdata/influxdb-client'</span>);
+<span class="ln"> 5</span>
+<span class="ln"> 6</span><span class="kw">const</span> broker = mqtt.<span class="fn">connect</span>(<span class="st">'mqtt://localhost'</span>);
+<span class="ln"> 7</span><span class="kw">const</span> wss    = <span class="kw">new</span> WebSocket.<span class="fn">Server</span>({ port: <span class="nm">8080</span> });
+<span class="ln"> 8</span><span class="kw">const</span> influx = <span class="kw">new</span> <span class="fn">InfluxDB</span>({ url: <span class="st">'http://localhost:8086'</span> });
+<span class="ln"> 9</span>
+<span class="ln">10</span>broker.<span class="fn">subscribe</span>(<span class="st">'home/#'</span>);  <span class="cm">// all home topics</span>
+<span class="ln">11</span>
+<span class="ln">12</span>broker.<span class="fn">on</span>(<span class="st">'message'</span>, (topic, payload) => {
+<span class="ln">13</span><span class="hl">    <span class="kw">const</span> data = JSON.<span class="fn">parse</span>(payload);</span>
+<span class="ln">14</span>    <span class="cm">// Write to InfluxDB time-series</span>
+<span class="ln">15</span>    writeApi.<span class="fn">writePoint</span>(<span class="kw">new</span> <span class="fn">Point</span>(topic)
+<span class="ln">16</span>        .<span class="fn">floatField</span>(<span class="st">'temp'</span>, data.temp)
+<span class="ln">17</span>        .<span class="fn">floatField</span>(<span class="st">'humi'</span>, data.humi));
+<span class="ln">18</span>    <span class="cm">// Broadcast to all WebSocket clients</span>
+<span class="ln">19</span>    wss.clients.<span class="fn">forEach</span>(ws =>
+<span class="ln">20</span><span class="hl">        ws.<span class="fn">send</span>(JSON.<span class="fn">stringify</span>({ topic, ...data }))</span>
+<span class="ln">21</span>    );
+<span class="ln">22</span>});
+    </div>
+  </div>
+  </div>
+
+  <div class="three-col">
+    <div class="card" style="--cl:var(--teal)"><h4>IoT Development Stack</h4><p><strong style="color:var(--teal)">Firmware</strong>: C/C++ (Arduino IDE, PlatformIO), MicroPython, Zephyr RTOS<br><strong style="color:var(--amber)">Edge</strong>: Python (Raspberry Pi), Node.js, Go<br><strong style="color:var(--violet)">Cloud</strong>: Node.js, Python, Java, Go<br><strong style="color:var(--green)">Data</strong>: InfluxDB, Grafana, Node-RED (visual flow programming)<br><strong style="color:var(--pink)">Dashboard</strong>: React, Vue, WebSockets</p></div>
+    <div class="card" style="--cl:var(--amber)"><h4>Node-RED — Visual IoT Programming</h4><p>Node-RED is a flow-based visual programming tool from IBM, built on Node.js. Drag and drop nodes: MQTT input → function node → InfluxDB output → email alert. No code needed for many IoT workflows. Runs on Raspberry Pi, Docker, or cloud. 4,000+ community nodes available.</p></div>
+    <div class="card" style="--cl:var(--violet)"><h4>TinyML — AI at the Edge</h4><p>TensorFlow Lite Micro enables ML inference on microcontrollers with &lt;256KB RAM. Train a model in TensorFlow, convert to TFLite, quantise to int8, deploy to Arduino Nano 33 BLE Sense or ESP32. Use cases: wake word detection, gesture recognition, vibration analysis, anomaly detection — all without cloud!</p></div>
+  </div>
+</div>
+</div>
+
+<script>
+// ── PCB canvas animation ──
+const canvas = document.getElementById('pcb-canvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+let traces = [], nodes = [], packets = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  generatePCB();
+}
+
+function generatePCB() {
+  traces = [];
+  nodes = [];
+  const gridX = 80, gridY = 60;
+  // Generate grid-aligned traces
+  for (let x = 0; x < W; x += gridX) {
+    for (let y = 0; y < H; y += gridY) {
+      if (Math.random() > 0.6) {
+        const len = gridX * (Math.floor(Math.random() * 3) + 1);
+        traces.push({ x1: x, y1: y, x2: Math.min(x + len, W), y2: y, dir: 'h' });
+      }
+      if (Math.random() > 0.65) {
+        const len = gridY * (Math.floor(Math.random() * 3) + 1);
+        traces.push({ x1: x, y1: y, x2: x, y2: Math.min(y + len, H), dir: 'v' });
+      }
+      if (Math.random() > 0.7) {
+        nodes.push({ x, y, r: Math.random() * 3 + 2 });
+      }
+    }
+  }
+}
+
+function spawnPacket() {
+  if (traces.length === 0) return;
+  const t = traces[Math.floor(Math.random() * traces.length)];
+  packets.push({
+    x: t.x1, y: t.y1,
+    tx: t.x2, ty: t.y2,
+    dir: t.dir,
+    progress: 0,
+    speed: 0.004 + Math.random() * 0.008,
+    color: ['#00e5b0','#00fff5','#ffbe00','#39ff14'][Math.floor(Math.random()*4)]
+  });
+}
+
+let tick = 0;
+function draw() {
+  tick++;
+  ctx.clearRect(0, 0, W, H);
+
+  // Draw traces
+  traces.forEach(t => {
+    ctx.beginPath();
+    ctx.moveTo(t.x1, t.y1);
+    ctx.lineTo(t.x2, t.y2);
+    ctx.strokeStyle = 'rgba(0,80,50,0.35)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Draw nodes
+  nodes.forEach(n => {
+    const pulse = Math.sin(tick * 0.03 + n.x * 0.01) * 0.5 + 0.5;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,${120 + pulse * 80},${70 + pulse * 50},${0.3 + pulse * 0.4})`;
+    ctx.fill();
+  });
+
+  // Move & draw packets
+  packets.forEach((p, i) => {
+    p.progress += p.speed;
+    p.x = p.x + (p.tx - (p.x - (p.x - (p.tx - p.x) * (p.progress-p.speed)))) * 0;
+    const px = p.x1 + (p.tx - p.x1) * p.progress;
+    const py = p.y1 + (p.ty - p.y1) * p.progress;
+
+    ctx.beginPath();
+    ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = p.color;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    if (p.progress >= 1) packets.splice(i, 1);
+  });
+
+  if (tick % 8 === 0 && packets.length < 40) spawnPacket();
+
+  requestAnimationFrame(draw);
+}
+
+resize();
+window.addEventListener('resize', resize);
+draw();
+
+// ── Tab navigation ──
+function go(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  const panel = document.getElementById('p-' + name);
+  if (panel) panel.classList.add('on');
+  if (btn && btn.classList) btn.classList.add('on');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
